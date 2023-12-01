@@ -19,7 +19,7 @@ def create_app():
     app.config['MYSQL_DATABASE_PASSWORD'] = open('/secrets/db_root_password.txt').readline().strip()
     app.config['MYSQL_DATABASE_HOST'] = 'db'
     app.config['MYSQL_DATABASE_PORT'] = 3306
-    app.config['MYSQL_DATABASE_DB'] = 'northwind'  # Change this to your DB name
+    app.config['MYSQL_DATABASE_DB'] = 'cool_db'  # Change this to your DB name
 
     # Initialize the database object with the settings above. 
     db.init_app(app)
@@ -35,11 +35,13 @@ def create_app():
     # Import the various Beluprint Objects
     from src.customers.customers import customers
     from src.products.products  import products
+    from src.animals.animals import animals
 
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
-    app.register_blueprint(customers,   url_prefix='/c')
-    app.register_blueprint(products,    url_prefix='/p')
+    app.register_blueprint(customers,   url_prefix='/customers')
+    app.register_blueprint(products,    url_prefix='/products')
+    app.register_blueprint(animals,    url_prefix='/animals')
 
     # Don't forget to return the app object
     return app
