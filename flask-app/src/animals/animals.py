@@ -77,10 +77,60 @@ def add_new_animal():
 def delete_animal(animalID):
     # get a cursor object from the database
     cursor = db.get_db().cursor()
-
     # use cursor to query the database for a list of products
     cursor.execute('DELETE FROM animal WHERE animalID={0}'.format(animalID))
-
     db.get_db().commit()
-    
     return jsonify({"message": "Success!"}) 
+
+# Get a certain animal from the database based on ID
+@animals.route('/<animalID>', methods=['GET'])
+def get_animal(animalID):
+    
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    cursor.execute('SELECT * FROM animal WHERE animalID={0}'.format(animalID))
+
+    # grab the column headers from the returned data
+    column_headers = [x[0] for x in cursor.description]
+
+    # create an empty dictionary object to use in 
+    # putting column headers together with data
+    json_data = []
+
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+
+    # for each of the rows, zip the data elements together with
+    # the column headers. 
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+
+    return jsonify(json_data)
+
+# Get all animals from the database based on a certain species
+@animals.route('/type/<species>', methods=['GET'])
+def get_animal_by_species(species):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    strSpecies = '"' + species + '"'
+    # use cursor to query the database for a list of animals
+    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal.animalID=animal_type.animalID WHERE species={0}'.format(strSpecies))
+
+    # grab the column headers from the returned data
+    column_headers = [x[0] for x in cursor.description]
+
+    # create an empty dictionary object to use in 
+    # putting column headers together with data
+    json_data = []
+
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+
+    # for each of the rows, zip the data elements together with
+    # the column headers. 
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+
+    return jsonify(json_data)
