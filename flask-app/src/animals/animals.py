@@ -5,9 +5,9 @@ from src import db
 
 animals = Blueprint('animals', __name__)
 
-# Get all the products from the database
+# Get all the animals from the database
 @animals.route('/', methods=['GET'])
-def get_products():
+def get_animals():
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
@@ -70,4 +70,17 @@ def add_new_animal():
     cursor.execute(query)
     db.get_db().commit()
     
-    return 'Success!'
+    return jsonify({"message": "Success!"})
+
+# Delete a specific animal from the database
+@animals.route('/<animalID>', methods=['DELETE'])
+def delete_animal(animalID):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    # use cursor to query the database for a list of products
+    cursor.execute('DELETE FROM animal WHERE animalID={0}'.format(animalID))
+
+    db.get_db().commit()
+    
+    return jsonify({"message": "Success!"}) 
