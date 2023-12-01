@@ -30,3 +30,44 @@ def get_products():
         json_data.append(dict(zip(column_headers, row)))
 
     return jsonify(json_data)
+
+@animals.route('/', methods=['POST'])
+def add_new_animal():
+    
+    # collecting data from the request object 
+    the_data = request.json
+    current_app.logger.info(the_data)
+
+    #extracting the variable
+    specialRequirements = the_data['specialRequirements']
+    age = the_data['age']
+    gender = the_data['gender']
+    price = the_data['price']
+    healthStatus = the_data['healthStatus']
+    behavior = the_data['behavior']
+    origin = the_data['origin']
+    availability = the_data['availability']
+    orderID = the_data['orderID']
+    supplierID = the_data['supplierID']
+
+    # Constructing the query
+    query = 'insert into animal (specialRequirements, healthStatus, behavior, origin, age, gender, price, availability, orderID, supplierID) values ("'
+    query += specialRequirements + '", "'
+    query += healthStatus + '", "'
+    query += behavior + '", "'
+    query += origin + '", '
+    query += str(age) + ', '
+    query += str(gender) + ', '
+    query += str(price) + ', '
+    query += str(availability) + ', '
+    query += str(orderID) + ', '
+    query += str(supplierID) + ')'
+    print(query)
+    current_app.logger.info(query)
+
+    # executing and committing the insert statement 
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
+    
+    return 'Success!'
