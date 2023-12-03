@@ -40,17 +40,22 @@ def add_new_guides():
     current_app.logger.info(the_data)
 
     #extracting the variable
-    orderDate = the_data['orderDate']
-    paymentAmount = the_data['paymentAmount']
-    paymentMethod = the_data['paymentMethod']
-    customerID = the_data['customerID']
+    title = the_data['title']
+    fullText = the_data['fullText']
+    dateCreated = the_data['dateCreated']
+
+    if title is None:
+        return jsonify({"message": "Error: title is null"}), 400
+    if fullText is None:
+        return jsonify({"message": "Error: fullText is null"}), 400
+    if dateCreated is None:
+        return jsonify({"message": "Error: dateCreated is null"}), 400
 
     # Constructing the query
-    query = 'insert into guides (orderDate, paymentAmount, paymentMethod, customerID) values ("'
-    query += str(orderDate) + '", "'
-    query += str(paymentAmount) + '", "'
-    query += str(paymentMethod) + '", "'
-    query += str(customerID) + '")'
+    query = 'insert into guides (title, fullText, dateCreated) values ("'
+    query += (title) + '","'
+    query += (fullText) + '","'
+    query += (dateCreated) + '")"'
     print(query)
     current_app.logger.info(query)
 
@@ -98,19 +103,21 @@ def update_guide(guideID):
     query = 'UPDATE guides SET '
 
     #construct query
-    update_params = []
-    if 'orderDate' in the_data:
-        orderDate = the_data['orderDate']
-        query += ('orderData = ' + str(orderDate) + ',')
-    if 'paymentAmount' in the_data:
-        paymentAmount = the_data['paymentAmount']
-        query += ('paymentAmount = ' + str(paymentAmount) + ',')
-    if 'paymentMethod' in the_data:
-        paymentMethod = the_data['paymentMethod']
-        query += ('paymentMethod = ' + str(paymentMethod) + ',')
-    if 'customerID' in the_data:
-        customerID = the_data['customerID']
-        query += ('customerID = ' + str(customerID) + ',')
+    if 'title' in the_data:
+        title = the_data['title']
+        if title is None:
+            query += ('title = NULL,')
+        else:
+            query += ('title = "' + title + '",')
+    if 'fullText' in the_data:
+        fullText = the_data['fullText']
+        if fullText is None:
+            return jsonify({"message": "Error: fullText is null"}), 400
+        query += ('fullText = "' + fullText + '",')
+    if 'dateCreated' in the_data:
+        dateCreated = the_data['dateCreated']
+        if dateCreated is None:
+            return jsonify({"message": "Error: dateCreated is null"}), 400
 
     #remove unnecessary comma    and    update the appropriate order by guideID
     query = query[0:len(query) - 1] + " WHERE guideID = {0}".format(guideID)

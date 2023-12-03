@@ -43,20 +43,38 @@ def add_new_review():
     title = the_data['title']
     fullText = the_data['fullText']
     dateCreated = the_data['dateCreated']
-    dateEdited = the_data['dateEdited']
-    datePublished = the_data['datePublished']
+    dateEdited = the_data['dateEdited'] # can be None
+    datePublished = the_data['datePublished'] # can be None
     author = the_data['author']
     customerID = the_data['customerID']
 
+    if title is None:
+        return jsonify({"message": "Error: title is null"}), 400
+    if fullText is None:
+        return jsonify({"message": "Error: fullText is null"}), 400
+    if dateCreated is None:
+        return jsonify({"message": "Error: dateCreated is null"}), 400
+    if author is None:
+        return jsonify({"message": "Error: author is null"}), 400
+    if customerID is None:
+        return jsonify({"message": "Error: customerID is null"}), 400
+
     # Constructing the query
     query = 'insert into review (title, fullText, dateCreated, dateEdited, datePublished, author, customerID) values ("'
-    query += title + '", "'
-    query += fullText + '", '
-    query += dateCreated + '", "'
-    query += datePublished + '", "'
-    query += dateEdited + '", "'
-    
-    query += author + '", '
+    query += title + '","'
+    query += fullText + '","'
+    query += datePublished + '","'
+    if dateEdited is None:
+        dateEdited = 'NULL'
+        query += dateEdited + ', '
+    else:
+        query += dateEdited + ', '
+    if datedPublished is None:
+        datedPublished = 'NULL'
+        query += datedPublished + ', '
+    else:
+        query += '"' + datedPublished + '","'
+    query += author + '",'
     query += str(customerID) + ')'
     print(query)
     current_app.logger.info(query)
@@ -107,24 +125,39 @@ def update_review(reviewID):
     #construct query
     if 'title' in the_data:
         title = the_data['title']
-        query += ('title = "' + title + '",')
+        if title is None:
+            return jsonify({"message": "Error: title is null"}), 400
     if 'fullText' in the_data:
         fullText = the_data['fullText']
+        if fullText is None:
+            return jsonify({"message": "Error: fullText is null"}), 400
         query += ('fullText = "' + fullText + '",')
     if 'dateCreated' in the_data:
         dateCreated = the_data['dateCreated']
-        query += ('dateCreated = ' + str(dateCreated) + ',')
+        if dateCreated is None:
+            return jsonify({"message": "Error: dateCreated is null"}), 400
+        query += ('dateCreated = "' + dateCreated + '",')
     if 'dateEdited' in the_data:
         dateEdited = the_data['dateEdited']
-        query += ('dateEdited = ' + str(dateEdited) + ',')
+        if dateEdited is None:
+            query += ('dateEdited = NULL,')
+        else:
+            query += ('dateEdited = ' + dateEdited + ',')
     if 'datePublished' in the_data:
         datePublished = the_data['datePublished']
-        query += ('datePublished = ' + str(datePublished) + ',')
+        if datePublished is None:
+            query += ('datePublished = NULL,')
+        else:
+            query += ('datePublished = ' + datePublished + ',')
     if 'author' in the_data:
         author = the_data['author']
+        if author is None:
+            return jsonify({"message": "Error: author is null"}), 400
         query += ('author = "' + author + '",')
     if 'customerID' in the_data:
-        author = the_data['customerID']
+        customerID = the_data['customerID']
+        if customerID is None:
+            return jsonify({"message": "Error: customerID is null"}), 400
         query += ('customerID = ' + str(customerID) + ',')
 
     #remove unnecessary comma    and    update the appropriate animal by animalID

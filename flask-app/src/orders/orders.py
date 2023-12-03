@@ -45,12 +45,21 @@ def add_new_order():
     paymentMethod = the_data['paymentMethod']
     customerID = the_data['customerID']
 
+    if orderDate is None:
+        return jsonify({"message": "Error: orderDate is null"}), 400
+    if paymentAmount is None:
+        return jsonify({"message": "Error: paymentAmount is null"}), 400
+    if paymentMethod is None:
+        return jsonify({"message": "Error: paymentMethod is null"}), 400
+    if customerID is None:
+        return jsonify({"message": "Error: customerID is null"}), 400
+
     # Constructing the query
     query = 'insert into `order` (orderDate, paymentAmount, paymentMethod, customerID) values ("'
-    query += str(orderDate) + '", "'
-    query += str(paymentAmount) + '", "'
-    query += str(paymentMethod) + '", "'
-    query += str(customerID) + '")'
+    query += (orderDate) + '", "'
+    query += (paymentAmount) + '", "'
+    query += (paymentMethod) + '", '
+    query += str(customerID) + ')'
     print(query)
     current_app.logger.info(query)
 
@@ -98,18 +107,26 @@ def update_order(orderID):
     query = 'UPDATE `order` SET '
 
     #construct query
-    update_params = []
     if 'orderDate' in the_data:
         orderDate = the_data['orderDate']
-        query += ('orderData = ' + str(orderDate) + ',')
+        if orderDate is None:
+            query += ('orderDate = NULL,')
+        else:
+            query += ('orderDate = "' + orderDate + '",')
     if 'paymentAmount' in the_data:
         paymentAmount = the_data['paymentAmount']
-        query += ('paymentAmount = ' + str(paymentAmount) + ',')
+        if paymentAmount is None:
+            return jsonify({"message": "Error: paymentAmount is null"}), 400
+        query += ('paymentAmount = "' + paymentAmount + '",')
     if 'paymentMethod' in the_data:
         paymentMethod = the_data['paymentMethod']
-        query += ('paymentMethod = ' + str(paymentMethod) + ',')
+        if paymentMethod is None:
+            return jsonify({"message": "Error: paymentMethod is null"}), 400
+        query += ('paymentMethod = "' + paymentMethod + '",')
     if 'customerID' in the_data:
         customerID = the_data['customerID']
+        if customerID is None:
+            return jsonify({"message": "Error: customerID is null"}), 400
         query += ('customerID = ' + str(customerID) + ',')
 
     #remove unnecessary comma    and    update the appropriate order by orderID
