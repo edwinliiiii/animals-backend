@@ -51,10 +51,11 @@ def add_new_review():
     # Constructing the query
     query = 'insert into review (title, fullText, dateCreated, dateEdited, datePublished, author, customerID) values ("'
     query += title + '", "'
-    query += fullText + '", "'
-    query += str(dateCreated) + ', '
-    query += str(dateEdited) + ', '
-    query += str(datePublished) + ', '
+    query += fullText + '", '
+    query += dateCreated + '", "'
+    query += datePublished + '", "'
+    query += dateEdited + '", "'
+    
     query += author + '", '
     query += str(customerID) + ')'
     print(query)
