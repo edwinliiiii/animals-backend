@@ -40,7 +40,7 @@ def add_new_animal():
     current_app.logger.info(the_data)
 
     #extracting the variable
-    specialRequirements = the_data['specialRequirements']
+    specialRequirements = the_data['specialRequirements'] # can be None
     age = the_data['age']
     gender = the_data['gender']
     price = the_data['price']
@@ -48,12 +48,29 @@ def add_new_animal():
     behavior = the_data['behavior']
     origin = the_data['origin']
     availability = the_data['availability']
-    orderID = the_data['orderID']
+    orderID = the_data['orderID'] # can be None
     supplierID = the_data['supplierID']
 
+    if age is None:
+        return jsonify({"message": "Error: age is null"}), 400
+    if gender is None:
+        return jsonify({"message": "Error: gender is null"}), 400
+    if price is None:
+        return jsonify({"message": "Error: price is null"}), 400
+    if healthStatus is None:
+        return jsonify({"message": "Error: healthStatus is null"}), 400
+    if behavior is None:
+        return jsonify({"message": "Error: behavior is null"}), 400
+    if origin is None:
+        return jsonify({"message": "Error: origin is null"}), 400
+    if availability is None:
+        return jsonify({"message": "Error: availability is null"}), 400
+    if supplierID is None:
+        return jsonify({"message": "Error: supplierID is null"}), 400
+        
+
     # Constructing the query
-    query = 'insert into animal (specialRequirements, healthStatus, behavior, origin, age, gender, price, availability, orderID, supplierID) values ("'
-    query += specialRequirements + '", "'
+    query = 'insert into animal (healthStatus, behavior, origin, age, gender, price, availability, orderID, specialRequirements, supplierID) values ("'
     query += healthStatus + '", "'
     query += behavior + '", "'
     query += origin + '", '
@@ -61,9 +78,17 @@ def add_new_animal():
     query += str(gender) + ', '
     query += str(price) + ', '
     query += str(availability) + ', '
-    query += str(orderID) + ', '
+    if orderID is None:
+        orderID = 'NULL'
+        query += orderID + ', '
+    else:
+        query += str(orderID) + ', '
+    if specialRequirements is None:
+        specialRequirements = 'NULL'
+        query += specialRequirements + ', '
+    else:
+        query += '"' + specialRequirements + '", '
     query += str(supplierID) + ')'
-    print(query)
     current_app.logger.info(query)
 
     # executing and committing the insert statement 
@@ -122,33 +147,55 @@ def update_animal(animalID):
     #construct query
     if 'specialRequirements' in the_data:
         specialRequirements = the_data['specialRequirements']
-        query += ('specialRequirements = "' + specialRequirements + '",')
+        if specialRequirements is None:
+            query += ('specialRequirements = NULL,')
+        else:
+            query += ('specialRequirements = "' + specialRequirements + '",')
     if 'healthStatus' in the_data:
         healthStatus = the_data['healthStatus']
+        if healthStatus is None:
+            return jsonify({"message": "Error: healthStatus is null"}), 400
         query += ('healthStatus = "' + healthStatus + '",')
     if 'behavior' in the_data:
         behavior = the_data['behavior']
+        if behavior is None:
+            return jsonify({"message": "Error: behavior is null"}), 400
         query += ('behavior = "' + behavior + '",')
     if 'origin' in the_data:
         origin = the_data['origin']
+        if origin is None:
+            return jsonify({"message": "Error: origin is null"}), 400
         query += ('origin = "' + origin + '",')
     if 'age' in the_data:
         age = the_data['age']
+        if age is None:
+            return jsonify({"message": "Error: age is null"}), 400
         query += ('age = ' + str(age) + ',')
     if 'gender' in the_data:
         gender = the_data['gender']
+        if gender is None:
+            return jsonify({"message": "Error: gender is null"}), 400
         query += ('gender = ' + str(gender) + ',')
     if 'price' in the_data:
         price = the_data['price']
+        if price is None:
+            return jsonify({"message": "Error: price is null"}), 400
         query += ('price = ' + str(price) + ',')
     if 'availability' in the_data:
         availability = the_data['availability']
+        if availability is None:
+            return jsonify({"message": "Error: availability is null"}), 400
         query += ('availability = ' + str(availability) + ',')
     if 'orderID' in the_data:
         orderID = the_data['orderID']
-        query += ('orderID = ' + str(orderID) + ',')
+        if orderID is None:
+            query += ('orderID = NULL,')
+        else:
+            query += ('orderID = ' + str(orderID) + ',')
     if 'supplierID' in the_data:
         supplierID = the_data['supplierID']
+        if supplierID is None:
+            return jsonify({"message": "Error: supplierID is null"}), 400
         query += ('supplierID = ' + str(supplierID) + ',')
 
     #remove unnecessary comma    and    update the appropriate animal by animalID

@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS guides;
 CREATE TABLE IF NOT EXISTS guides
 (
     title       varchar(75) NOT NULL,
-    `fullText`  text,
+    `fullText`  text        NOT NULL,
     dateCreated datetime    NOT NULL,
     guideID     int AUTO_INCREMENT PRIMARY KEY
 );
@@ -31,16 +31,16 @@ CREATE TABLE IF NOT EXISTS guides
 DROP TABLE IF EXISTS customer;
 CREATE TABLE IF NOT EXISTS customer
 (
-    firstName   varchar(50),
-    lastName    varchar(50),
-    cellPhone   varchar(15),
-    homePhone   varchar(15),
-    email       varchar(75),
-    street      varchar(50),
-    city        varchar(50),
-    state       varchar(25),
-    zip         int,
-    profileText text,
+    firstName   varchar(50) NOT NULL,
+    lastName    varchar(50) NOT NULL,
+    cellPhone   varchar(15) NOT NULL,
+    homePhone   varchar(15) NOT NULL,
+    email       varchar(75) NOT NULL,
+    street      varchar(50) NOT NULL,
+    city        varchar(50) NOT NULL,
+    state       varchar(25) NOT NULL,
+    zip         int         NOT NULL,
+    profileText text        NOT NULL,
     customerID  int AUTO_INCREMENT PRIMARY KEY,
     CONSTRAINT unique_email UNIQUE (email),
     CONSTRAINT unique_cell UNIQUE (cellPhone),
@@ -51,7 +51,7 @@ DROP TABLE IF EXISTS review;
 CREATE TABLE IF NOT EXISTS review
 (
     title         varchar(75) NOT NULL,
-    `fullText`    text,
+    `fullText`    text,       NOT NULL
     dateCreated   datetime    NOT NULL,
     dateEdited    datetime,
     datePublished datetime,
@@ -64,10 +64,10 @@ CREATE TABLE IF NOT EXISTS review
 DROP TABLE IF EXISTS `order`;
 CREATE TABLE IF NOT EXISTS `order`
 (
-    orderDate     datetime,
-    paymentAmount decimal(15, 2) NOT NULL,
-    paymentMethod varchar(15),
-    customerID    int            NOT NULL,
+    orderDate     datetime          NOT NULL,
+    paymentAmount decimal(15, 2)    NOT NULL,
+    paymentMethod varchar(15)       NOT NULL,
+    customerID    int               NOT NULL,
     orderID       int AUTO_INCREMENT PRIMARY KEY,
     FOREIGN KEY (customerID) REFERENCES customer (customerID) ON UPDATE cascade ON DELETE restrict
 );
@@ -75,17 +75,17 @@ CREATE TABLE IF NOT EXISTS `order`
 DROP TABLE IF EXISTS animal_supplier;
 CREATE TABLE IF NOT EXISTS animal_supplier
 (
-    firstName     varchar(50),
-    lastName      varchar(50),
-    phone         varchar(15),
-    email         varchar(75),
-    company       varchar(75),
-    city          varchar(50),
-    state         varchar(25),
-    country       varchar(25),
-    contactLink   varchar(50),
+    firstName     varchar(50) NOT NULL,
+    lastName      varchar(50) NOT NULL,
+    phone         varchar(15) NOT NULL,
+    email         varchar(75) NOT NULL,
+    company       varchar(75) NOT NULL,
+    city          varchar(50) NOT NULL,
+    state         varchar(25) NOT NULL,
+    country       varchar(25) NOT NULL,
+    contactLink   varchar(50) NOT NULL,
     countSupplied int NOT NULL,
-    profileText   text,
+    profileText   text NOT NULL,
     supplierID    int AUTO_INCREMENT PRIMARY KEY,
     CONSTRAINT unique_email UNIQUE (email),
     CONSTRAINT unique_phone UNIQUE (phone)
