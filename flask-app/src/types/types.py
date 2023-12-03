@@ -12,7 +12,7 @@ def get_types():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of products
-    cursor.execute('SELECT * FROM types')
+    cursor.execute('SELECT * FROM animal_type')
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -31,6 +31,7 @@ def get_types():
 
     return jsonify(json_data)
 
+# add a new animal type to the db
 @types.route('/', methods=['POST'])
 def add_new_type():
     
@@ -42,14 +43,12 @@ def add_new_type():
     species = the_data['species']
     subSpecies = the_data['subSpecies']
     animalID = the_data['animalID']
-    animalTypeID = the_data['animalTypeID']
 
     # Constructing the query
-    query = 'insert into type (species, subSpecies, animalID, animalTypeID) values ("'
+    query = 'insert into animal_type (species, subSpecies, animalID) values ("'
     query += species + '", "'
     query += subSpecies + '", "'
-    query += animalID + '", "'
-    query += animalTypeID + '") '
+    query += str(animalID) + '")'
     print(query)
     current_app.logger.info(query)
 
@@ -60,14 +59,14 @@ def add_new_type():
     
     return 'Success!'
 
-# Get a certain type from the database based on ID
-@types.route('/<typeID>', methods=['GET'])
-def get_type(typeID):
+# Get a certain animal type from the database based on ID
+@types.route('/<animalTypeID>', methods=['GET'])
+def get_type(animalTypeID):
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of products
-    cursor.execute('SELECT * FROM type WHERE typeID={0}'.format(typeID))
+    cursor.execute('SELECT * FROM animal_type WHERE animalTypeID={0}'.format(animalTypeID))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -85,3 +84,50 @@ def get_type(typeID):
         json_data.append(dict(zip(column_headers, row)))
 
     return jsonify(json_data)
+
+    # Update the specified animal type in the database based on animalTypeID
+@types.route('/<animalTypeID>', methods=['PUT'])
+def update_type(animalTypeID):
+    
+    # collecting data from the request object 
+    the_data = request.json
+    current_app.logger.info(the_data)
+
+    query = 'UPDATE animal_type SET '
+
+    #construct query
+    if 'species' in the_data:
+        species = the_data['species']
+        query += ('species = "' + species + '",')
+    if 'subSpecies' in the_data:
+        subSpecies = the_data['subSpecies']
+        query += ('subSpecies = "' + subSpecies + '",')
+    if 'animalID' in the_data:
+        animalID = the_data['animalID']
+        query += ('animalID = "' + str(animalID) + '",')
+    if 'animalTypeID' in the_data:
+        animalTypeID = the_data['animalTypeID']
+        query += ('animalTypeID = "' + animalTypeID + '",')
+
+    #remove unnecessary comma    and    update the appropriate type by animalTypeID
+    query = query[0:len(query) - 1] + " WHERE animalTypeID = {0}".format(animalTypeID)
+
+    print(query)
+    current_app.logger.info(query)
+
+    # executing and committing the insert statement 
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
+    
+    return jsonify({"message": "Success!"})
+
+    # Delete a specific animal type from the database based on its animalTypeID
+@types.route('/<animalTypeID>', methods=['DELETE'])
+def delete_type(animalTypeID):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+    # use cursor to query the database for a list of products
+    cursor.execute('DELETE FROM animal_type WHERE animalTypeID={0}'.format(animalTypeID))
+    db.get_db().commit()
+    return jsonify({"message": "Success!"}) 
