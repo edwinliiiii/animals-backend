@@ -41,7 +41,7 @@ def add_new_guides():
 
     #extracting the variable
     title = the_data['title']
-    fullText = the_data['fullText']
+    fullText = the_data['fullText']  # Use 'fullText' without backticks
     dateCreated = the_data['dateCreated']
 
     if title is None:
@@ -53,9 +53,9 @@ def add_new_guides():
 
     # Constructing the query
     query = 'insert into guides (title, fullText, dateCreated) values ("'
-    query += (title) + '","'
-    query += (fullText) + '","'
-    query += (dateCreated) + '")"'
+    query += (title) + '", "'
+    query += (fullText) + '", "'
+    query += (dateCreated) + '")'
     print(query)
     current_app.logger.info(query)
 
