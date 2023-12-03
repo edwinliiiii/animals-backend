@@ -31,6 +31,7 @@ def get_types():
 
     return jsonify(json_data)
 
+# add a new animal type to the db
 @types.route('/', methods=['POST'])
 def add_new_type():
     
@@ -58,14 +59,14 @@ def add_new_type():
     
     return 'Success!'
 
-# Get a certain type from the database based on ID
+# Get a certain animal type from the database based on ID
 @types.route('/<animalTypeID>', methods=['GET'])
 def get_type(animalTypeID):
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of products
-    cursor.execute('SELECT * FROM animal_type WHERE animalTypeID={0}'.format(typeID))
+    cursor.execute('SELECT * FROM animal_type WHERE animalTypeID={0}'.format(animalTypeID))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -84,7 +85,7 @@ def get_type(animalTypeID):
 
     return jsonify(json_data)
 
-    # Update the specified type in the database based on animalTypeID
+    # Update the specified animal type in the database based on animalTypeID
 @types.route('/<animalTypeID>', methods=['PUT'])
 def update_type(animalTypeID):
     
@@ -108,7 +109,7 @@ def update_type(animalTypeID):
         animalTypeID = the_data['animalTypeID']
         query += ('animalTypeID = "' + animalTypeID + '",')
 
-    #remove unnecessary comma    and    update the appropriate type by typeID
+    #remove unnecessary comma    and    update the appropriate type by animalTypeID
     query = query[0:len(query) - 1] + " WHERE animalTypeID = {0}".format(animalTypeID)
 
     print(query)
@@ -121,7 +122,7 @@ def update_type(animalTypeID):
     
     return jsonify({"message": "Success!"})
 
-    # Delete a specific animal from the database based on its id
+    # Delete a specific animal type from the database based on its animalTypeID
 @types.route('/<animalTypeID>', methods=['DELETE'])
 def delete_type(animalTypeID):
     # get a cursor object from the database
