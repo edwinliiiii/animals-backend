@@ -31,6 +31,7 @@ def get_reviews():
 
     return jsonify(json_data)
 
+# add a new review to the db
 @reviews.route('/', methods=['POST'])
 def add_new_review():
     
