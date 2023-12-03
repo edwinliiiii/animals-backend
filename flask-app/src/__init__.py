@@ -37,7 +37,6 @@ def create_app():
     from src.products.products  import products
     from src.animals.animals import animals
     from src.types.types import types
-    from src.reviews.reviews import reviews
 
 
     # Register the routes from each Blueprint with the app object
@@ -46,7 +45,6 @@ def create_app():
     app.register_blueprint(products,    url_prefix='/products')
     app.register_blueprint(animals,    url_prefix='/animals')
     app.register_blueprint(types,    url_prefix='/types')
-    app.register_blueprint(reviews,    url_prefix='/reviews')
 
     # Don't forget to return the app object
     return app
