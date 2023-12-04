@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS guides;
 CREATE TABLE IF NOT EXISTS guides
 (
     title       varchar(75) NOT NULL,
-    `fullText`  text        NOT NULL,
+    guideText  text        NOT NULL,
     dateCreated datetime    NOT NULL,
     guideID     int AUTO_INCREMENT PRIMARY KEY
 );
@@ -51,7 +51,7 @@ DROP TABLE IF EXISTS review;
 CREATE TABLE IF NOT EXISTS review
 (
     title         varchar(75) NOT NULL,
-    `fullText`    text,       NOT NULL
+    reviewText    text,       NOT NULL
     dateCreated   datetime    NOT NULL,
     dateEdited    datetime,
     datePublished datetime,
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS animal_type
 );
 
 -- Add sample data. 
-INSERT INTO guides (title, `fullText`, dateCreated)
+INSERT INTO guides (title, guideText, dateCreated)
 VALUES
 ('Getting Started with Pet Adoption', 'This guide will help you navigate the process of adopting a new pet.', '2022-11-25'),
 ('Caring for Your New Companion', 'Learn about the essential care tips for your newly adopted pet.', '2022-11-24'),
@@ -132,7 +132,7 @@ VALUES
 ('Alice', 'Smith', '555-123-4567', '555-987-6543', 'alice.smith@example.com', '456 Oak St', 'Townsville', 'NY', 67890, 'Excited to bring a new furry friend into our home.'),
 ('Bob', 'Johnson', '999-888-7777', '111-222-3333', 'bob.johnson@example.com', '789 Elm St', 'Villagetown', 'TX', 54321, 'Looking for a playful companion for my family.');
 
-INSERT INTO review (title, `fullText`, dateCreated, dateEdited, datePublished, author, customerID)
+INSERT INTO review (title, reviewText, dateCreated, dateEdited, datePublished, author, customerID)
 VALUES
 ('Great Experience', 'I adopted a lovely cat from this shelter. The staff was friendly, and the process was smooth.', '2022-11-25', NULL, '2022-11-26', 'HappyAdopter', 1),
 ('Wonderful Service', 'The team at AdoptAllAnimals is dedicated and caring. They helped me find the perfect pet for my family.', '2022-11-24', NULL, '2022-11-25', 'PetLover123', 2),

@@ -41,20 +41,20 @@ def add_new_guides():
 
     #extracting the variable
     title = the_data['title']
-    fullText = the_data['fullText']  # Use 'fullText' without backticks
+    guideText = the_data['guideText'] 
     dateCreated = the_data['dateCreated']
 
     if title is None:
         return jsonify({"message": "Error: title is null"}), 400
-    if fullText is None:
-        return jsonify({"message": "Error: fullText is null"}), 400
+    if guideText is None:
+        return jsonify({"message": "Error: guideText is null"}), 400
     if dateCreated is None:
         return jsonify({"message": "Error: dateCreated is null"}), 400
 
     # Constructing the query
-    query = 'insert into guides (title, fullText, dateCreated) values ("'
+    query = 'insert into guides (title, guideText, dateCreated) values ("'
     query += (title) + '", "'
-    query += (fullText) + '", "'
+    query += (guideText) + '", "'
     query += (dateCreated) + '")'
     print(query)
     current_app.logger.info(query)
@@ -109,11 +109,11 @@ def update_guide(guideID):
             query += ('title = NULL,')
         else:
             query += ('title = "' + title + '",')
-    if 'fullText' in the_data:
-        fullText = the_data['fullText']
-        if fullText is None:
-            return jsonify({"message": "Error: fullText is null"}), 400
-        query += ('fullText = "' + fullText + '",')
+    if 'guideText' in the_data:
+        guideText = the_data['guideText']
+        if guideText is None:
+            return jsonify({"message": "Error: guideText is null"}), 400
+        query += ('guideText = "' + guideText + '",')
     if 'dateCreated' in the_data:
         dateCreated = the_data['dateCreated']
         if dateCreated is None:
