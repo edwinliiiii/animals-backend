@@ -1,3 +1,4 @@
+from datetime import date
 from flask import Blueprint, request, jsonify, make_response, current_app
 import json
 from src import db
@@ -40,23 +41,24 @@ def add_new_order():
     current_app.logger.info(the_data)
 
     #extracting the variable
-    orderDate = the_data['orderDate']
+    if 'paymentAmount' not in the_data:
+        return jsonify({"message": "Error: paymentAmount not provided"})
+    if 'paymentMethod' not in the_data:
+        return jsonify({"message": "Error: paymentMethod not provided"})
+    
     paymentAmount = the_data['paymentAmount']
     paymentMethod = the_data['paymentMethod']
     customerID = the_data['customerID']
 
-    if orderDate is None:
-        return jsonify({"message": "Error: orderDate is null"}), 400
     if paymentAmount is None:
         return jsonify({"message": "Error: paymentAmount is null"}), 400
     if paymentMethod is None:
         return jsonify({"message": "Error: paymentMethod is null"}), 400
-    if customerID is None:
-        return jsonify({"message": "Error: customerID is null"}), 400
 
     # Constructing the query
     query = 'insert into `order` (orderDate, paymentAmount, paymentMethod, customerID) values ("'
-    query += (orderDate) + '", "'
+    currDate = date.today()
+    query += str(currDate) + '", "'
     query += (paymentAmount) + '", "'
     query += (paymentMethod) + '", '
     query += str(customerID) + ')'
@@ -73,7 +75,6 @@ def add_new_order():
 # Get a certain order from the database based on ID
 @orders.route('/<orderID>', methods=['GET'])
 def get_order(orderID):
-    
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
@@ -110,9 +111,8 @@ def update_order(orderID):
     if 'orderDate' in the_data:
         orderDate = the_data['orderDate']
         if orderDate is None:
-            query += ('orderDate = NULL,')
-        else:
-            query += ('orderDate = "' + orderDate + '",')
+            return jsonify({"message": "Error: orderDate is null"}), 400
+        query += ('orderDate = "' + orderDate + '",')
     if 'paymentAmount' in the_data:
         paymentAmount = the_data['paymentAmount']
         if paymentAmount is None:
@@ -151,3 +151,24 @@ def delete_order(orderID):
     cursor.execute('DELETE FROM `order` WHERE orderID={0}'.format(orderID))
     db.get_db().commit()
     return jsonify({"message": "Success!"}) 
+
+# Retrieve all orders of a particular payment type
+@orders.route('/customer/<paymentMethod>', methods=['GET'])
+def get_all_orders_of_paymentMethod(paymentMethod):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+    # use cursor to query the database for a list of products
+    cursor.execute('SELECT * FROM `order` WHERE paymentMethod=' + '"' + format(paymentMethod) + '"')
+    # grab the column headers from the returned data
+    column_headers = [x[0] for x in cursor.description]
+    # create an empty dictionary object to use in 
+    # putting column headers together with data
+    json_data = []
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+    # for each of the rows, zip the data elements together with
+    # the column headers. 
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+
+    return jsonify(json_data)

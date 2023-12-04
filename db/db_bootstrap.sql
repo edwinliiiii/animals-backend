@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS guides;
 CREATE TABLE IF NOT EXISTS guides
 (
     title       varchar(75) NOT NULL,
-    guideText  text        NOT NULL,
+    guideText   text        NOT NULL,
     dateCreated datetime    NOT NULL,
     guideID     int AUTO_INCREMENT PRIMARY KEY
 );
@@ -51,7 +51,7 @@ DROP TABLE IF EXISTS review;
 CREATE TABLE IF NOT EXISTS review
 (
     title         varchar(75) NOT NULL,
-    reviewText    text,       NOT NULL
+    reviewText    text       NOT NULL,
     dateCreated   datetime    NOT NULL,
     dateEdited    datetime,
     datePublished datetime,

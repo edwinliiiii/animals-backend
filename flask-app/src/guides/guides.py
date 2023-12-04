@@ -1,3 +1,4 @@
+from datetime import date
 from flask import Blueprint, request, jsonify, make_response, current_app
 import json
 from src import db
@@ -40,23 +41,25 @@ def add_new_guides():
     current_app.logger.info(the_data)
 
     #extracting the variable
+    if 'title' not in the_data:
+        return jsonify({"message": "Error: title not provided"})
+    if 'guideText' not in the_data:
+        return jsonify({"message": "Error: reviewText not provided"})
+    
     title = the_data['title']
-    guideText = the_data['guideText'] 
-    dateCreated = the_data['dateCreated']
+    guideText = the_data['guideText']
 
     if title is None:
         return jsonify({"message": "Error: title is null"}), 400
     if guideText is None:
         return jsonify({"message": "Error: guideText is null"}), 400
-    if dateCreated is None:
-        return jsonify({"message": "Error: dateCreated is null"}), 400
 
     # Constructing the query
     query = 'insert into guides (title, guideText, dateCreated) values ("'
     query += (title) + '", "'
-    query += (guideText) + '", "'
-    query += (dateCreated) + '")'
-    print(query)
+    query += (guideText) + '",'
+    currDate = date.today()
+    query += ('"' + str(currDate) + '")')
     current_app.logger.info(query)
 
     # executing and committing the insert statement 
@@ -106,18 +109,13 @@ def update_guide(guideID):
     if 'title' in the_data:
         title = the_data['title']
         if title is None:
-            query += ('title = NULL,')
-        else:
-            query += ('title = "' + title + '",')
+            return jsonify({"message": "Error: title is null"}), 400
+        query += ('title = "' + title + '",')
     if 'guideText' in the_data:
         guideText = the_data['guideText']
         if guideText is None:
             return jsonify({"message": "Error: guideText is null"}), 400
         query += ('guideText = "' + guideText + '",')
-    if 'dateCreated' in the_data:
-        dateCreated = the_data['dateCreated']
-        if dateCreated is None:
-            return jsonify({"message": "Error: dateCreated is null"}), 400
 
     #remove unnecessary comma    and    update the appropriate order by guideID
     query = query[0:len(query) - 1] + " WHERE guideID = {0}".format(guideID)
@@ -139,5 +137,15 @@ def delete_guide(guideID):
     cursor = db.get_db().cursor()
     # use cursor to query the database for a list of guides
     cursor.execute('DELETE FROM guides WHERE guideID={0}'.format(guideID))
+    db.get_db().commit()
+    return jsonify({"message": "Success!"}) 
+
+# Delete all guides created earlier than the specified datetime from the database
+@guides.route('/created/<datetime>', methods=['DELETE'])
+def delete_guide_by_datetime(datetime):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+    # use cursor to query the database for a list of guides
+    cursor.execute('DELETE FROM guides WHERE dateCreated < "{0}"'.format(datetime))
     db.get_db().commit()
     return jsonify({"message": "Success!"}) 

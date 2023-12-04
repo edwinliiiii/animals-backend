@@ -1,3 +1,4 @@
+from datetime import date
 from flask import Blueprint, request, jsonify, make_response, current_app
 import json
 from src import db
@@ -40,6 +41,20 @@ def add_new_review():
     current_app.logger.info(the_data)
 
     #extracting the variable
+    if 'title' not in the_data:
+        return jsonify({"message": "Error: title not provided"})
+    if 'reviewText' not in the_data:
+        return jsonify({"message": "Error: reviewText not provided"})
+    if 'dateCreated' not in the_data:
+        return jsonify({"message": "Error: dateCreated not provided"})
+    if "dateEdited" not in the_data:
+        return jsonify({"message": "Error: dateEdited not provided"})
+    if "datePublished" not in the_data:
+        return jsonify({"message": "Error: datePublished not provided"})
+    if "author" not in the_data:
+        return jsonify({"message": "Error: author not provided"})
+    if "customerID" not in the_data:
+        return jsonify({"message": "Error: customerID not provided"})
     title = the_data['title']
     reviewText = the_data['reviewText']
     dateCreated = the_data['dateCreated']
@@ -60,21 +75,21 @@ def add_new_review():
         return jsonify({"message": "Error: customerID is null"}), 400
 
     # Constructing the query
-    query = 'insert into review (title, reviewText, dateCreated, dateEdited, datePublished, author, customerID) values ("'
-    query += title + '","'
-    query += reviewText + '","'
-    query += datePublished + '","'
+    query = 'insert into review (title, reviewText, dateCreated, dateEdited, datePublished, author, customerID) values ('
+    query += '"' + title + '",'
+    query += '"' + reviewText + '",'
+    query += '"' + datePublished + '",'
     if dateEdited is None:
         dateEdited = 'NULL'
-        query += dateEdited + ', '
+        query += dateEdited + ','
     else:
-        query += dateEdited + ', '
-    if datedPublished is None:
-        datedPublished = 'NULL'
-        query += datedPublished + ', '
+        query += '"' + dateEdited + '",'
+    if datePublished is None:
+        datePublished = 'NULL'
+        query += datePublished + ','
     else:
-        query += '"' + datedPublished + '","'
-    query += author + '",'
+        query += '"' + datePublished + '",'
+    query += '"' + author + '",'
     query += str(customerID) + ')'
     print(query)
     current_app.logger.info(query)
@@ -127,38 +142,25 @@ def update_review(reviewID):
         title = the_data['title']
         if title is None:
             return jsonify({"message": "Error: title is null"}), 400
+        query += ('title = "' + title + '",')
     if 'reviewText' in the_data:
         reviewText = the_data['reviewText']
         if reviewText is None:
             return jsonify({"message": "Error: reviewText is null"}), 400
         query += ('reviewText = "' + reviewText + '",')
-    if 'dateCreated' in the_data:
-        dateCreated = the_data['dateCreated']
-        if dateCreated is None:
-            return jsonify({"message": "Error: dateCreated is null"}), 400
-        query += ('dateCreated = "' + dateCreated + '",')
-    if 'dateEdited' in the_data:
-        dateEdited = the_data['dateEdited']
-        if dateEdited is None:
-            query += ('dateEdited = NULL,')
-        else:
-            query += ('dateEdited = ' + dateEdited + ',')
     if 'datePublished' in the_data:
         datePublished = the_data['datePublished']
         if datePublished is None:
             query += ('datePublished = NULL,')
         else:
-            query += ('datePublished = ' + datePublished + ',')
+            query += ('datePublished = "' + datePublished + '",')
     if 'author' in the_data:
         author = the_data['author']
         if author is None:
             return jsonify({"message": "Error: author is null"}), 400
         query += ('author = "' + author + '",')
-    if 'customerID' in the_data:
-        customerID = the_data['customerID']
-        if customerID is None:
-            return jsonify({"message": "Error: customerID is null"}), 400
-        query += ('customerID = ' + str(customerID) + ',')
+    currDate = date.today()
+    query += ('dateEdited = "' + str(currDate) + '",')
 
     #remove unnecessary comma    and    update the appropriate animal by animalID
     query = query[0:len(query) - 1] + " WHERE reviewID = {0}".format(reviewID)
@@ -181,5 +183,25 @@ def delete_review(reviewID):
     cursor = db.get_db().cursor()
     # use cursor to query the database for a list of reviews
     cursor.execute('DELETE FROM review WHERE reviewID={0}'.format(reviewID))
+    db.get_db().commit()
+    return jsonify({"message": "Success!"}) 
+
+# Delete a specific review by title from the database
+@reviews.route('/<title>', methods=['DELETE'])
+def delete_review_by_title(title):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+    # use cursor to query the database for a list of reviews
+    cursor.execute('DELETE FROM review WHERE title={0}'.format(title))
+    db.get_db().commit()
+    return jsonify({"message": "Success!"}) 
+
+# Delete all reviews created earlier than the specified datetime from the database
+@reviews.route('/created/<datetime>', methods=['DELETE'])
+def delete_review_by_datetime(datetime):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+    # use cursor to query the database for a list of guides
+    cursor.execute('DELETE FROM review WHERE dateCreated < "{0}"'.format(datetime))
     db.get_db().commit()
     return jsonify({"message": "Success!"}) 

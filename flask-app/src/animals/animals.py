@@ -12,7 +12,33 @@ def get_animals():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of products
-    cursor.execute('SELECT * FROM animal')
+    cursor.execute('SELECT * FROM animal')#JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID')
+
+    # grab the column headers from the returned data
+    column_headers = [x[0] for x in cursor.description]
+
+    # create an empty dictionary object to use in 
+    # putting column headers together with data
+    json_data = []
+
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+
+    # for each of the rows, zip the data elements together with
+    # the column headers. 
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+
+    return jsonify(json_data)
+
+# Get all the animals from the database
+@animals.route('/joined', methods=['GET'])
+def get_animals_joined():
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    # use cursor to query the database for a list of products
+    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID')
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -40,6 +66,31 @@ def add_new_animal():
     current_app.logger.info(the_data)
 
     #extracting the variable
+    if 'specialRequirements' not in the_data:
+        return jsonify({"message": "Error: specialRequirements not provided"})
+    if 'age' not in the_data:
+        return jsonify({"message": "Error: age not provided"})
+    if 'gender' not in the_data:
+        return jsonify({"message": "Error: gender not provided"})
+    if "price" not in the_data:
+        return jsonify({"message": "Error: price not provided"})
+    if "healthStatus" not in the_data:
+        return jsonify({"message": "Error: healthStatus not provided"})
+    if "behavior" not in the_data:
+        return jsonify({"message": "Error: behavior not provided"})
+    if "origin" not in the_data:
+        return jsonify({"message": "Error: origin not provided"})
+    if "availability" not in the_data:
+        return jsonify({"message": "Error: availability not provided"})
+    if "orderID" not in the_data:
+        return jsonify({"message": "Error: orderID not provided"})
+    if "supplierID" not in the_data:
+        return jsonify({"message": "Error: supplierID not provided"})
+    if "species" not in the_data:
+        return jsonify({"message": "Error: species not provided"})
+    if "subSpecies" not in the_data:
+        return jsonify({"message": "Error: subSpecies not provided"})
+    
     specialRequirements = the_data['specialRequirements'] # can be None
     age = the_data['age']
     gender = the_data['gender']
@@ -50,6 +101,8 @@ def add_new_animal():
     availability = the_data['availability']
     orderID = the_data['orderID'] # can be None
     supplierID = the_data['supplierID']
+    species = the_data['species']
+    subSpecies = the_data['subSpecies']
 
     if age is None:
         return jsonify({"message": "Error: age is null"}), 400
@@ -67,7 +120,11 @@ def add_new_animal():
         return jsonify({"message": "Error: availability is null"}), 400
     if supplierID is None:
         return jsonify({"message": "Error: supplierID is null"}), 400
-        
+    if species is None:
+        return jsonify({"message": "Error: species is null"}), 400
+    if subSpecies is None:
+        return jsonify({"message": "Error: subSpecies is null"}), 400
+
 
     # Constructing the query
     query = 'insert into animal (healthStatus, behavior, origin, age, gender, price, availability, orderID, specialRequirements, supplierID) values ("'
@@ -95,6 +152,17 @@ def add_new_animal():
     cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
+    animalID = cursor.lastrowid
+
+    # Make an animal.
+    query = 'insert into animal_type (species, subSpecies, animalID) values ("'
+    query += species + '", "'
+    query += subSpecies + '", "'
+    query += str(animalID) + '")'
+    current_app.logger.info(query)
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
     
     return jsonify({"message": "Success!"})
 
@@ -103,7 +171,9 @@ def add_new_animal():
 def delete_animal(animalID):
     # get a cursor object from the database
     cursor = db.get_db().cursor()
-    # use cursor to query the database for a list of products
+    # delete tag from the database for a list of products
+    cursor.execute('DELETE FROM animal_type WHERE animalID={0}'.format(animalID))
+    # delete animal from the database for a list of products
     cursor.execute('DELETE FROM animal WHERE animalID={0}'.format(animalID))
     db.get_db().commit()
     return jsonify({"message": "Success!"}) 
@@ -115,7 +185,8 @@ def get_animal(animalID):
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
-    cursor.execute('SELECT * FROM animal WHERE animalID={0}'.format(animalID))
+    current_app.logger.info('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID WHERE animal.animalID={0}'.format(animalID))
+    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID WHERE animal.animalID={0}'.format(animalID))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -208,7 +279,26 @@ def update_animal(animalID):
     cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
-    
+
+    query = 'UPDATE animal_type SET '
+
+    #now update types if necessary
+    if 'species' in the_data:
+        species = the_data['species']
+        if species is None:
+            return jsonify({"message": "Error: species is null"}), 400
+        query += 'species="' + species + '",'
+    if 'subSpecies' in the_data:
+        subSpecies = the_data['subSpecies']
+        if subSpecies is None:
+            return jsonify({"message": "Error: subSpecies is null"}), 400
+        query += 'subSpecies="' + subSpecies + '",'
+    #remove unnecessary comma    and    update the appropriate type by animalTypeID
+    if 'species' in the_data or 'subSpecies' in the_data:
+        query = query[0:len(query) - 1] + " WHERE animalID = {0}".format(animalID)
+        cursor = db.get_db().cursor()
+        cursor.execute(query)
+        db.get_db().commit()
     return jsonify({"message": "Success!"})
 
 
@@ -220,7 +310,7 @@ def get_animal_by_species(species):
 
     strSpecies = '"' + species + '"'
     # use cursor to query the database for a list of animals
-    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal.animalID=animal_type.animalID WHERE species={0}'.format(strSpecies))
+    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID WHERE species={0}'.format(strSpecies))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -248,7 +338,7 @@ def get_animal_by_species_subspecies(species, subSpecies):
     strSpecies = '"' + species + '"'
     strSubSpecies = '"' + subSpecies + '"'
     # use cursor to query the database for a list of animals
-    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal.animalID=animal_type.animalID WHERE species={0} AND subSpecies={1}'.format(strSpecies, strSubSpecies))
+    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID WHERE species={0} AND subSpecies={1}'.format(strSpecies, strSubSpecies))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -302,7 +392,7 @@ def get_animal_by_availability(availability):
 
     strAvailability = str(availability)
     # use cursor to query the database for a list of animals
-    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal.animalID=animal_type.animalID WHERE availability={0}'.format(strAvailability))
+    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID WHERE availability={0}'.format(strAvailability))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]

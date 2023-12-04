@@ -40,6 +40,29 @@ def add_new_supplier():
     current_app.logger.info(the_data)
 
     #extracting the variable
+    if 'firstName' not in the_data:
+        return jsonify({"message": "Error: firstName not provided"})
+    if 'lastName' not in the_data:
+        return jsonify({"message": "Error: lastName not provided"})
+    if 'phone' not in the_data:
+        return jsonify({"message": "Error: phone not provided"})
+    if "email" not in the_data:
+        return jsonify({"message": "Error: email not provided"})
+    if "company" not in the_data:
+        return jsonify({"message": "Error: company not provided"})
+    if "city" not in the_data:
+        return jsonify({"message": "Error: city not provided"})
+    if "state" not in the_data:
+        return jsonify({"message": "Error: state not provided"})
+    if "country" not in the_data:
+        return jsonify({"message": "Error: country not provided"})
+    if "contactLink" not in the_data:
+        return jsonify({"message": "Error: contactLink not provided"})
+    if "countSupplied" not in the_data:
+        return jsonify({"message": "Error: countSupplied not provided"})
+    if "profileText" not in the_data:
+        return jsonify({"message": "Error: profileText not provided"})
+    
     firstName = the_data['firstName']
     lastName = the_data['lastName']
     phone = the_data['phone']
@@ -74,6 +97,19 @@ def add_new_supplier():
         return jsonify({"message": "Error: countSupplied is null"}), 400
     if profileText is None:
         return jsonify({"message": "Error: profileText is null"}), 400
+    
+
+    cursor = db.get_db().cursor()
+    cursor.execute("SELECT * FROM animal_supplier WHERE email = " + '"' + email + '"')
+    existingInfo = cursor.fetchone()
+    if existingInfo is not None:
+        return "Error: email is already registered"
+    
+    cursor.execute("SELECT * FROM animal_supplier WHERE phone = " +  '"' + phone + '"')
+    existingInfo = cursor.fetchone()
+    if existingInfo is not None:
+        return "Error: phone is already registered"
+
 
     # Constructing the query
     query = 'insert into animal_supplier (firstName, lastName, phone, email, company, city, state, country, contactLink, countSupplied, profileText) values ("'
@@ -92,11 +128,10 @@ def add_new_supplier():
     current_app.logger.info(query)
 
     # executing and committing the insert statement 
-    cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
     
-    return 'Success!'
+    return jsonify({"message":'Success!'})
 
 # Get a certain supplier from the database based on ID
 @suppliers.route('/<supplierID>', methods=['GET'])
@@ -124,7 +159,7 @@ def get_supplier(supplierID):
 
     return jsonify(json_data)
 
-    # Update the specified supplier in the database based on supplierID
+# Update the specified supplier in the database based on supplierID
 @suppliers.route('/<supplierID>', methods=['PUT'])
 def update_supplier(supplierID):
     
@@ -134,56 +169,72 @@ def update_supplier(supplierID):
 
     query = 'UPDATE animal_supplier SET '
 
+    cursor = db.get_db().cursor()
+    
     #construct query
     if 'firstName' in the_data:
         firstName = the_data['firstName']
         if firstName is None:
             return jsonify({"message": "Error: firstName is null"}), 400
+        query += ('firstName = "' + firstName + '",')
     if 'lastName' in the_data:
         lastName = the_data['lastName']
         if lastName is None:
             return jsonify({"message": "Error: lastName is null"}), 400
+        query += ('lastName = "' + lastName + '",')
     if 'phone' in the_data:
         phone = the_data['phone']
         if phone is None:
             return jsonify({"message": "Error: phone is null"}), 400
+        cursor.execute("SELECT * FROM animal_supplier WHERE phone = " +  '"' + phone + '"')
+        existingInfo = cursor.fetchone()
+        if existingInfo is not None:
+            return "Error: phone is already registered"
+        query += ('phone = "' + phone + '",')
     if 'email' in the_data:
         email = the_data['email']
         if email is None:
             return jsonify({"message": "Error: email is null"}), 400
+        cursor.execute("SELECT * FROM animal_supplier WHERE email = " + '"' + email + '"')
+        existingInfo = cursor.fetchone()
+        if existingInfo is not None:
+            return "Error: email is already registered"
+        query += ('email = "' + email + '",')
     if 'company' in the_data:
         company = the_data['company']
         if company is None:
             return jsonify({"message": "Error: company is null"}), 400
-    if 'email' in the_data:
-        email = the_data['email']
-        if email is None:
-            return jsonify({"message": "Error: email is null"}), 400
+        query += ('company = "' + company + '",')
     if 'city' in the_data:
         city = the_data['city']
         if city is None:
             return jsonify({"message": "Error: city is null"}), 400
+        query += ('city = "' + city + '",')
     if 'state' in the_data:
         state = the_data['state']
         if state is None:
             return jsonify({"message": "Error: state is null"}), 400
+        query += ('state = "' + state + '",')
     if 'country' in the_data:
         country = the_data['country']
         if country is None:
             return jsonify({"message": "Error: country is null"}), 400
+        query += ('country = "' + country + '",')
     if 'contactLink' in the_data:
         contactLink = the_data['contactLink']
         if contactLink is None:
             return jsonify({"message": "Error: contactLink is null"}), 400
+        query += ('contactLink = "' + contactLink + '",')
+    if 'profileText' in the_data:
+        profileText = the_data['profileText']
+        if profileText is None:
+            return jsonify({"message": "Error: profileText is null"}), 400
+        query += ('profileText = "' + profileText + '",')
     if 'countSupplied' in the_data:
         countSupplied = the_data['countSupplied']
         if countSupplied is None:
             return jsonify({"message": "Error: countSupplied is null"}), 400
         query += ('countSupplied = ' + str(countSupplied) + ',')
-    if 'profileText' in the_data:
-        profileText = the_data['profileText']
-        if profileText is None:
-            return jsonify({"message": "Error: profileText is null"}), 400
 
     #remove unnecessary comma    and    update the appropriate supplier by supplierID
     query = query[0:len(query) - 1] + " WHERE supplierID = {0}".format(supplierID)
@@ -191,8 +242,7 @@ def update_supplier(supplierID):
     print(query)
     current_app.logger.info(query)
 
-    # executing and committing the insert statement 
-    cursor = db.get_db().cursor()
+    # executing and committing the insert statement
     cursor.execute(query)
     db.get_db().commit()
     
