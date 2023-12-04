@@ -44,6 +44,13 @@ def add_new_type():
     subSpecies = the_data['subSpecies']
     animalID = the_data['animalID']
 
+    if species is None:
+        return jsonify({"message": "Error: species is null"}), 400
+    if subSpecies is None:
+        return jsonify({"message": "Error: subSpecies is null"}), 400
+    if animalID is None:
+        return jsonify({"message": "Error: animalID is null"}), 400
+
     # Constructing the query
     query = 'insert into animal_type (species, subSpecies, animalID) values ("'
     query += species + '", "'
@@ -98,16 +105,18 @@ def update_type(animalTypeID):
     #construct query
     if 'species' in the_data:
         species = the_data['species']
-        query += ('species = "' + species + '",')
+        if species is None:
+            return jsonify({"message": "Error: species is null"}), 400
     if 'subSpecies' in the_data:
         subSpecies = the_data['subSpecies']
-        query += ('subSpecies = "' + subSpecies + '",')
+        if subSpecies is None:
+            return jsonify({"message": "Error: subSpecies is null"}), 400
     if 'animalID' in the_data:
         animalID = the_data['animalID']
-        query += ('animalID = "' + str(animalID) + '",')
-    if 'animalTypeID' in the_data:
-        animalTypeID = the_data['animalTypeID']
-        query += ('animalTypeID = "' + animalTypeID + '",')
+        if animalID is None:
+            return jsonify({"message": "Error: animalID is null"}), 400
+        query += ('animalID = ' + str(animalID) + ',')
+
 
     #remove unnecessary comma    and    update the appropriate type by animalTypeID
     query = query[0:len(query) - 1] + " WHERE animalTypeID = {0}".format(animalTypeID)

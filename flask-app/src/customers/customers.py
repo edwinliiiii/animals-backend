@@ -51,6 +51,27 @@ def add_new_customer():
     zip = the_data['zip']
     profileText = the_data['profileText']
 
+    if firstName is None:
+        return jsonify({"message": "Error: firstName is null"}), 400
+    if lastName is None:
+        return jsonify({"message": "Error: lastName is null"}), 400
+    if cellPhone is None:
+        return jsonify({"message": "Error: cellPhone is null"}), 400
+    if homePhone is None:
+        return jsonify({"message": "Error: homePhone is null"}), 400
+    if email is None:
+        return jsonify({"message": "Error: email is null"}), 400
+    if street is None:
+        return jsonify({"message": "Error: street is null"}), 400
+    if city is None:
+        return jsonify({"message": "Error: city is null"}), 400
+    if state is None:
+        return jsonify({"message": "Error: state is null"}), 400
+    if zip is None:
+        return jsonify({"message": "Error: zip is null"}), 400
+    if profileText is None:
+        return jsonify({"message": "Error: profileText is null"}), 400
+
     # Constructing the query
     query = 'insert into customer (firstName, lastName, cellPhone, homePhone, email, street, city, state, zip, profileText) values ("'
     query += firstName + '", "'

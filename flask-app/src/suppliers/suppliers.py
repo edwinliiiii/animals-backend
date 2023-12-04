@@ -52,6 +52,29 @@ def add_new_supplier():
     countSupplied = the_data['countSupplied']
     profileText = the_data['profileText']
 
+    if firstName is None:
+        return jsonify({"message": "Error: firstName is null"}), 400
+    if lastName is None:
+        return jsonify({"message": "Error: lastName is null"}), 400
+    if phone is None:
+        return jsonify({"message": "Error: phone is null"}), 400
+    if email is None:
+        return jsonify({"message": "Error: email is null"}), 400
+    if company is None:
+        return jsonify({"message": "Error: company is null"}), 400
+    if city is None:
+        return jsonify({"message": "Error: city is null"}), 400
+    if state is None:
+        return jsonify({"message": "Error: state is null"}), 400
+    if country is None:
+        return jsonify({"message": "Error: country is null"}), 400
+    if contactLink is None:
+        return jsonify({"message": "Error: contactLink is null"}), 400
+    if countSupplied is None:
+        return jsonify({"message": "Error: countSupplied is null"}), 400
+    if profileText is None:
+        return jsonify({"message": "Error: profileText is null"}), 400
+
     # Constructing the query
     query = 'insert into animal_supplier (firstName, lastName, phone, email, company, city, state, country, contactLink, countSupplied, profileText) values ("'
     query += firstName + '", "'
@@ -114,37 +137,53 @@ def update_supplier(supplierID):
     #construct query
     if 'firstName' in the_data:
         firstName = the_data['firstName']
-        query += ('firstName = "' + firstName + '",')
+        if firstName is None:
+            return jsonify({"message": "Error: firstName is null"}), 400
     if 'lastName' in the_data:
         lastName = the_data['lastName']
-        query += ('lastName = "' + lastName + '",')
+        if lastName is None:
+            return jsonify({"message": "Error: lastName is null"}), 400
     if 'phone' in the_data:
         phone = the_data['phone']
-        query += ('phone = "' + phone + '",')
+        if phone is None:
+            return jsonify({"message": "Error: phone is null"}), 400
     if 'email' in the_data:
         email = the_data['email']
-        query += ('email = "' + email + '",')
+        if email is None:
+            return jsonify({"message": "Error: email is null"}), 400
     if 'company' in the_data:
         company = the_data['company']
-        query += ('company = "' + company + '",')
+        if company is None:
+            return jsonify({"message": "Error: company is null"}), 400
+    if 'email' in the_data:
+        email = the_data['email']
+        if email is None:
+            return jsonify({"message": "Error: email is null"}), 400
     if 'city' in the_data:
         city = the_data['city']
-        query += ('city = "' + city + '",')
+        if city is None:
+            return jsonify({"message": "Error: city is null"}), 400
     if 'state' in the_data:
         state = the_data['state']
-        query += ('state = "' + state + '",')
+        if state is None:
+            return jsonify({"message": "Error: state is null"}), 400
     if 'country' in the_data:
         country = the_data['country']
-        query += ('country = "' + country + '",')
+        if country is None:
+            return jsonify({"message": "Error: country is null"}), 400
     if 'contactLink' in the_data:
         contactLink = the_data['contactLink']
-        query += ('contactLink = "' + contactLink + '",')
+        if contactLink is None:
+            return jsonify({"message": "Error: contactLink is null"}), 400
     if 'countSupplied' in the_data:
         countSupplied = the_data['countSupplied']
-        query += ('countSupplied = "' + str(countSupplied) + '",')
+        if countSupplied is None:
+            return jsonify({"message": "Error: countSupplied is null"}), 400
+        query += ('countSupplied = ' + str(countSupplied) + ',')
     if 'profileText' in the_data:
         profileText = the_data['profileText']
-        query += ('profileText = "' + profileText + '",')
+        if profileText is None:
+            return jsonify({"message": "Error: profileText is null"}), 400
 
     #remove unnecessary comma    and    update the appropriate supplier by supplierID
     query = query[0:len(query) - 1] + " WHERE supplierID = {0}".format(supplierID)
