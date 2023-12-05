@@ -39,6 +39,8 @@ def create_app():
     from src.orders.orders import orders
     from src.guides.guides import guides
     from src.suppliers.suppliers import suppliers
+    from src.orders.orders import orders
+    from src.guides.guides import guides
 
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each
