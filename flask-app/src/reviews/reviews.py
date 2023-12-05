@@ -45,21 +45,12 @@ def add_new_review():
         return jsonify({"message": "Error: title not provided"})
     if 'reviewText' not in the_data:
         return jsonify({"message": "Error: reviewText not provided"})
-    if 'dateCreated' not in the_data:
-        return jsonify({"message": "Error: dateCreated not provided"})
-    if "dateEdited" not in the_data:
-        return jsonify({"message": "Error: dateEdited not provided"})
-    if "datePublished" not in the_data:
-        return jsonify({"message": "Error: datePublished not provided"})
     if "author" not in the_data:
         return jsonify({"message": "Error: author not provided"})
     if "customerID" not in the_data:
         return jsonify({"message": "Error: customerID not provided"})
     title = the_data['title']
     reviewText = the_data['reviewText']
-    dateCreated = the_data['dateCreated']
-    dateEdited = the_data['dateEdited'] # can be None
-    datePublished = the_data['datePublished'] # can be None
     author = the_data['author']
     customerID = the_data['customerID']
 
@@ -67,8 +58,6 @@ def add_new_review():
         return jsonify({"message": "Error: title is null"}), 400
     if reviewText is None:
         return jsonify({"message": "Error: reviewText is null"}), 400
-    if dateCreated is None:
-        return jsonify({"message": "Error: dateCreated is null"}), 400
     if author is None:
         return jsonify({"message": "Error: author is null"}), 400
     if customerID is None:
@@ -78,17 +67,9 @@ def add_new_review():
     query = 'insert into review (title, reviewText, dateCreated, dateEdited, datePublished, author, customerID) values ('
     query += '"' + title + '",'
     query += '"' + reviewText + '",'
-    query += '"' + datePublished + '",'
-    if dateEdited is None:
-        dateEdited = 'NULL'
-        query += dateEdited + ','
-    else:
-        query += '"' + dateEdited + '",'
-    if datePublished is None:
-        datePublished = 'NULL'
-        query += datePublished + ','
-    else:
-        query += '"' + datePublished + '",'
+    query += '"' + str(date.today()) + '",'
+    query += 'NULL' + ','
+    query += 'NULL' + ','
     query += '"' + author + '",'
     query += str(customerID) + ')'
     print(query)
@@ -159,6 +140,10 @@ def update_review(reviewID):
         if author is None:
             return jsonify({"message": "Error: author is null"}), 400
         query += ('author = "' + author + '",')
+
+    if query is 'UPDATE review SET ':
+        return jsonify({"message": "Error: no fields provided"}), 400
+    
     currDate = date.today()
     query += ('dateEdited = "' + str(currDate) + '",')
 

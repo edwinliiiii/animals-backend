@@ -116,7 +116,10 @@ def update_guide(guideID):
         if guideText is None:
             return jsonify({"message": "Error: guideText is null"}), 400
         query += ('guideText = "' + guideText + '",')
-
+    
+    if query is 'UPDATE guides SET ':
+        return jsonify({"message": "Error: no fields provided"}), 400
+    
     #remove unnecessary comma    and    update the appropriate order by guideID
     query = query[0:len(query) - 1] + " WHERE guideID = {0}".format(guideID)
 

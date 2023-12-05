@@ -236,6 +236,8 @@ def update_supplier(supplierID):
             return jsonify({"message": "Error: countSupplied is null"}), 400
         query += ('countSupplied = ' + str(countSupplied) + ',')
 
+    if query is 'UPDATE animal_supplier SET ':
+        return jsonify({"message": "Error: no fields provided"}), 400
     #remove unnecessary comma    and    update the appropriate supplier by supplierID
     query = query[0:len(query) - 1] + " WHERE supplierID = {0}".format(supplierID)
 

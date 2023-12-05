@@ -243,6 +243,8 @@ def update_customer(customerID):
             return jsonify({"message": "Error: profileText is null"}), 400
         query += ('profileText = "' + profileText + '",')
 
+    if query is 'UPDATE customer SET ':
+        return jsonify({"message": "Error: no fields provided"}), 400
     #remove unnecessary comma    and    update the appropriate supplier by supplierID
     query = query[0:len(query) - 1] + " WHERE customerID = {0}".format(customerID)
 

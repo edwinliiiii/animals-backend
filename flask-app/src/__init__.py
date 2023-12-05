@@ -37,9 +37,7 @@ def create_app():
     from src.animals.animals import animals
     from src.reviews.reviews import reviews
     from src.orders.orders import orders
-    from src.guides.guides import guides
     from src.suppliers.suppliers import suppliers
-    from src.orders.orders import orders
     from src.guides.guides import guides
 
     # Register the routes from each Blueprint with the app object

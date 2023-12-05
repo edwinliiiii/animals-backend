@@ -45,6 +45,8 @@ def add_new_order():
         return jsonify({"message": "Error: paymentAmount not provided"})
     if 'paymentMethod' not in the_data:
         return jsonify({"message": "Error: paymentMethod not provided"})
+    if 'customerID' not in the_data:
+        return jsonify({"message": "Error: customerID not provided"})
     
     paymentAmount = the_data['paymentAmount']
     paymentMethod = the_data['paymentMethod']
@@ -54,6 +56,8 @@ def add_new_order():
         return jsonify({"message": "Error: paymentAmount is null"}), 400
     if paymentMethod is None:
         return jsonify({"message": "Error: paymentMethod is null"}), 400
+    if customerID is None:
+        return jsonify({"message": "Error: customerID is null"}), 400
 
     # Constructing the query
     query = 'insert into `order` (orderDate, paymentAmount, paymentMethod, customerID) values ("'
@@ -129,6 +133,9 @@ def update_order(orderID):
             return jsonify({"message": "Error: customerID is null"}), 400
         query += ('customerID = ' + str(customerID) + ',')
 
+    if query is 'UPDATE `order` SET ':
+        return jsonify({"message": "Error: no fields provided"}), 400
+    
     #remove unnecessary comma    and    update the appropriate order by orderID
     query = query[0:len(query) - 1] + " WHERE orderID = {0}".format(orderID)
 

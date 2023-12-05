@@ -154,7 +154,7 @@ def add_new_animal():
     db.get_db().commit()
     animalID = cursor.lastrowid
 
-    # Make an animal.
+    # Make an animal type
     query = 'insert into animal_type (species, subSpecies, animalID) values ("'
     query += species + '", "'
     query += subSpecies + '", "'
@@ -269,6 +269,8 @@ def update_animal(animalID):
             return jsonify({"message": "Error: supplierID is null"}), 400
         query += ('supplierID = ' + str(supplierID) + ',')
 
+    if query is 'UPDATE animal SET ':
+        return jsonify({"message": "Error: no fields provided"}), 400
     #remove unnecessary comma    and    update the appropriate animal by animalID
     query = query[0:len(query) - 1] + " WHERE animalID = {0}".format(animalID)
 
