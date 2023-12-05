@@ -82,8 +82,6 @@ def add_new_animal():
         return jsonify({"message": "Error: origin not provided"})
     if "availability" not in the_data:
         return jsonify({"message": "Error: availability not provided"})
-    if "orderID" not in the_data:
-        return jsonify({"message": "Error: orderID not provided"})
     if "supplierID" not in the_data:
         return jsonify({"message": "Error: supplierID not provided"})
     if "species" not in the_data:
@@ -99,7 +97,6 @@ def add_new_animal():
     behavior = the_data['behavior']
     origin = the_data['origin']
     availability = the_data['availability']
-    orderID = the_data['orderID'] # can be None
     supplierID = the_data['supplierID']
     species = the_data['species']
     subSpecies = the_data['subSpecies']
@@ -135,11 +132,7 @@ def add_new_animal():
     query += str(gender) + ', '
     query += str(price) + ', '
     query += str(availability) + ', '
-    if orderID is None:
-        orderID = 'NULL'
-        query += orderID + ', '
-    else:
-        query += str(orderID) + ', '
+    query += 'NULL, ' #animal does not belong to an order when created.
     if specialRequirements is None:
         specialRequirements = 'NULL'
         query += specialRequirements + ', '
@@ -395,6 +388,33 @@ def get_animal_by_availability(availability):
     strAvailability = str(availability)
     # use cursor to query the database for a list of animals
     cursor.execute('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID WHERE availability={0}'.format(strAvailability))
+
+    # grab the column headers from the returned data
+    column_headers = [x[0] for x in cursor.description]
+
+    # create an empty dictionary object to use in 
+    # putting column headers together with data
+    json_data = []
+
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+
+    # for each of the rows, zip the data elements together with
+    # the column headers. 
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+
+    return jsonify(json_data)
+
+
+# Get all the animals from the database
+@animals.route('/supplier/<supplierID>', methods=['GET'])
+def get_animals_by_supplier(supplierID):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    # use cursor to query the database for a list of products
+    cursor.execute('SELECT * FROM animal JOIN animal_type ON animal_type.animalID = animal.animalID JOIN animal_supplier ON animal.supplierID = animal_supplier.supplierID WHERE animal.supplierID={0}'.format(supplierID))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
