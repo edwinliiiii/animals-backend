@@ -3,16 +3,16 @@ import json
 from src import db
 
 
-customers = Blueprint('customers', __name__)
+suppliers = Blueprint('suppliers', __name__)
 
-# Get all the customers from the database
-@customers.route('/', methods=['GET'])
-def get_customers():
+# Get all the suppliers from the database
+@suppliers.route('/', methods=['GET'])
+def get_suppliers():
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
-    # use cursor to query the database for a list of customers
-    cursor.execute('SELECT * FROM customer')
+    # use cursor to query the database for a list of suppliers
+    cursor.execute('SELECT * FROM animal_supplier')
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -31,9 +31,9 @@ def get_customers():
 
     return jsonify(json_data)
 
-# add a new customer to the db
-@customers.route('/', methods=['POST'])
-def add_new_customer():
+# add a new supplier to the db
+@suppliers.route('/', methods=['POST'])
+def add_new_supplier():
     
     # collecting data from the request object 
     the_data = request.json
@@ -44,101 +44,103 @@ def add_new_customer():
         return jsonify({"message": "Error: firstName not provided"})
     if 'lastName' not in the_data:
         return jsonify({"message": "Error: lastName not provided"})
-    if 'cellPhone' not in the_data:
-        return jsonify({"message": "Error: cellPhone not provided"})
-    if 'homePhone' not in the_data:
-        return jsonify({"message": "Error: homePhone not provided"})
+    if 'phone' not in the_data:
+        return jsonify({"message": "Error: phone not provided"})
     if "email" not in the_data:
         return jsonify({"message": "Error: email not provided"})
-    if "street" not in the_data:
-        return jsonify({"message": "Error: street not provided"})
+    if "company" not in the_data:
+        return jsonify({"message": "Error: company not provided"})
     if "city" not in the_data:
         return jsonify({"message": "Error: city not provided"})
     if "state" not in the_data:
         return jsonify({"message": "Error: state not provided"})
-    if "zip" not in the_data:
-        return jsonify({"message": "Error: zip not provided"})
+    if "country" not in the_data:
+        return jsonify({"message": "Error: country not provided"})
+    if "contactLink" not in the_data:
+        return jsonify({"message": "Error: contactLink not provided"})
+    if "countSupplied" not in the_data:
+        return jsonify({"message": "Error: countSupplied not provided"})
     if "profileText" not in the_data:
         return jsonify({"message": "Error: profileText not provided"})
     
     firstName = the_data['firstName']
     lastName = the_data['lastName']
-    cellPhone = the_data['cellPhone']
-    homePhone = the_data['homePhone']
+    phone = the_data['phone']
     email = the_data['email']
-    street = the_data['street']
+    company = the_data['company']
     city = the_data['city']
     state = the_data['state']
-    zip = the_data['zip']
+    country = the_data['country']
+    contactLink = the_data['contactLink']
+    countSupplied = the_data['countSupplied']
     profileText = the_data['profileText']
 
     if firstName is None:
         return jsonify({"message": "Error: firstName is null"}), 400
     if lastName is None:
         return jsonify({"message": "Error: lastName is null"}), 400
-    if cellPhone is None:
-        return jsonify({"message": "Error: cellPhone is null"}), 400
-    if homePhone is None:
-        return jsonify({"message": "Error: homePhone is null"}), 400
+    if phone is None:
+        return jsonify({"message": "Error: phone is null"}), 400
     if email is None:
         return jsonify({"message": "Error: email is null"}), 400
-    if street is None:
-        return jsonify({"message": "Error: street is null"}), 400
+    if company is None:
+        return jsonify({"message": "Error: company is null"}), 400
     if city is None:
         return jsonify({"message": "Error: city is null"}), 400
     if state is None:
         return jsonify({"message": "Error: state is null"}), 400
-    if zip is None:
-        return jsonify({"message": "Error: zip is null"}), 400
+    if country is None:
+        return jsonify({"message": "Error: country is null"}), 400
+    if contactLink is None:
+        return jsonify({"message": "Error: contactLink is null"}), 400
+    if countSupplied is None:
+        return jsonify({"message": "Error: countSupplied is null"}), 400
     if profileText is None:
         return jsonify({"message": "Error: profileText is null"}), 400
     
+
     cursor = db.get_db().cursor()
-    cursor.execute("SELECT * FROM customer WHERE cellPhone = " +  '"' + cellPhone + '"')
-    existingInfo = cursor.fetchone()
-    if existingInfo is not None:
-        return "Error: cellPhone is already registered"
-    
-    cursor.execute("SELECT * FROM customer WHERE homePhone = " +  '"' + homePhone + '"')
-    existingInfo = cursor.fetchone()
-    if existingInfo is not None:
-        return "Error: homePhone is already registered"
-    
-    cursor.execute("SELECT * FROM customer WHERE email = " +  '"' + email + '"')
+    cursor.execute("SELECT * FROM animal_supplier WHERE email = " + '"' + email + '"')
     existingInfo = cursor.fetchone()
     if existingInfo is not None:
         return "Error: email is already registered"
     
+    cursor.execute("SELECT * FROM animal_supplier WHERE phone = " +  '"' + phone + '"')
+    existingInfo = cursor.fetchone()
+    if existingInfo is not None:
+        return "Error: phone is already registered"
+
+
     # Constructing the query
-    query = 'insert into customer (firstName, lastName, cellPhone, homePhone, email, street, city, state, zip, profileText) values ("'
+    query = 'insert into animal_supplier (firstName, lastName, phone, email, company, city, state, country, contactLink, countSupplied, profileText) values ("'
     query += firstName + '", "'
     query += lastName + '", "'
-    query += cellPhone + '", "'
-    query += homePhone + '", "'
+    query += phone + '", "'
     query += email + '", "'
-    query += street + '", "'
+    query += company + '", "'
     query += city + '", "'
-    query += state + '", '
-    query += str(zip) + ', "'
+    query += state + '", "'
+    query += country + '", "'
+    query += contactLink + '", '
+    query += str(countSupplied) + ', "'
     query += profileText + '")'
     print(query)
     current_app.logger.info(query)
 
     # executing and committing the insert statement 
-    cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
     
     return jsonify({"message":'Success!'})
 
-# Get a certain customer from the database based on ID
-@customers.route('/<customerID>', methods=['GET'])
-def get_type(customerID):
+# Get a certain supplier from the database based on ID
+@suppliers.route('/<supplierID>', methods=['GET'])
+def get_supplier(supplierID):
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of products
-    cursor.execute('SELECT * FROM customer WHERE customerID={0}'.format(customerID))
+    cursor.execute('SELECT * FROM animal_supplier WHERE supplierID={0}'.format(supplierID))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
@@ -157,25 +159,15 @@ def get_type(customerID):
 
     return jsonify(json_data)
 
-    # Delete a specific customer from the database based on its customerID
-@customers.route('/<customerID>', methods=['DELETE'])
-def delete_type(customerID):
-    # get a cursor object from the database
-    cursor = db.get_db().cursor()
-    # use cursor to query the database for a list of customers
-    cursor.execute('DELETE FROM customer WHERE customerID={0}'.format(customerID))
-    db.get_db().commit()
-    return jsonify({"message": "Success!"}) 
-
 # Update the specified supplier in the database based on supplierID
-@customers.route('/<customerID>', methods=['PUT'])
-def update_customer(customerID):
+@suppliers.route('/<supplierID>', methods=['PUT'])
+def update_supplier(supplierID):
     
     # collecting data from the request object 
     the_data = request.json
     current_app.logger.info(the_data)
 
-    query = 'UPDATE customer SET '
+    query = 'UPDATE animal_supplier SET '
 
     cursor = db.get_db().cursor()
     
@@ -190,38 +182,29 @@ def update_customer(customerID):
         if lastName is None:
             return jsonify({"message": "Error: lastName is null"}), 400
         query += ('lastName = "' + lastName + '",')
-    if 'cellPhone' in the_data:
-        cellPhone = the_data['cellPhone']
-        if cellPhone is None:
-            return jsonify({"message": "Error: cellPhone is null"}), 400
-        cursor.execute("SELECT * FROM customer WHERE cellPhone = " +  '"' + cellPhone + '"')
+    if 'phone' in the_data:
+        phone = the_data['phone']
+        if phone is None:
+            return jsonify({"message": "Error: phone is null"}), 400
+        cursor.execute("SELECT * FROM animal_supplier WHERE phone = " +  '"' + phone + '"')
         existingInfo = cursor.fetchone()
         if existingInfo is not None:
-            return "Error: cellPhone is already registered"
-        query += ('cellPhone = "' + cellPhone + '",')
-    if 'homePhone' in the_data:
-        homePhone = the_data['homePhone']
-        if homePhone is None:
-            return jsonify({"message": "Error: homePhone is null"}), 400
-        cursor.execute("SELECT * FROM customer WHERE homePhone = " +  '"' + homePhone + '"')
-        existingInfo = cursor.fetchone()
-        if existingInfo is not None:
-            return "Error: homePhone is already registered"
-        query += ('homePhone = "' + homePhone + '",')
+            return "Error: phone is already registered"
+        query += ('phone = "' + phone + '",')
     if 'email' in the_data:
         email = the_data['email']
         if email is None:
             return jsonify({"message": "Error: email is null"}), 400
-        cursor.execute("SELECT * FROM customer WHERE email = " + '"' + email + '"')
+        cursor.execute("SELECT * FROM animal_supplier WHERE email = " + '"' + email + '"')
         existingInfo = cursor.fetchone()
         if existingInfo is not None:
             return "Error: email is already registered"
         query += ('email = "' + email + '",')
-    if 'street' in the_data:
-        street = the_data['street']
-        if street is None:
-            return jsonify({"message": "Error: street is null"}), 400
-        query += ('street = "' + street + '",')
+    if 'company' in the_data:
+        company = the_data['company']
+        if company is None:
+            return jsonify({"message": "Error: company is null"}), 400
+        query += ('company = "' + company + '",')
     if 'city' in the_data:
         city = the_data['city']
         if city is None:
@@ -232,21 +215,31 @@ def update_customer(customerID):
         if state is None:
             return jsonify({"message": "Error: state is null"}), 400
         query += ('state = "' + state + '",')
-    if 'zip' in the_data:
-        zip = the_data['zip']
-        if zip is None:
-            return jsonify({"message": "Error: zip is null"}), 400
-        query += ('zip = ' + str(zip) + ',')
+    if 'country' in the_data:
+        country = the_data['country']
+        if country is None:
+            return jsonify({"message": "Error: country is null"}), 400
+        query += ('country = "' + country + '",')
+    if 'contactLink' in the_data:
+        contactLink = the_data['contactLink']
+        if contactLink is None:
+            return jsonify({"message": "Error: contactLink is null"}), 400
+        query += ('contactLink = "' + contactLink + '",')
     if 'profileText' in the_data:
         profileText = the_data['profileText']
         if profileText is None:
             return jsonify({"message": "Error: profileText is null"}), 400
         query += ('profileText = "' + profileText + '",')
+    if 'countSupplied' in the_data:
+        countSupplied = the_data['countSupplied']
+        if countSupplied is None:
+            return jsonify({"message": "Error: countSupplied is null"}), 400
+        query += ('countSupplied = ' + str(countSupplied) + ',')
 
-    if query is 'UPDATE customer SET ':
+    if query is 'UPDATE animal_supplier SET ':
         return jsonify({"message": "Error: no fields provided"}), 400
     #remove unnecessary comma    and    update the appropriate supplier by supplierID
-    query = query[0:len(query) - 1] + " WHERE customerID = {0}".format(customerID)
+    query = query[0:len(query) - 1] + " WHERE supplierID = {0}".format(supplierID)
 
     print(query)
     current_app.logger.info(query)
@@ -257,15 +250,50 @@ def update_customer(customerID):
     
     return jsonify({"message": "Success!"})
 
+    # Delete a specific supplier from the database based on its supplierID
+@suppliers.route('/<supplierID>', methods=['DELETE'])
+def delete_supplier(supplierID):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+    # use cursor to query the database for a list of suppliers
+    cursor.execute('DELETE FROM animal_supplier WHERE supplierID={0}'.format(supplierID))
+    db.get_db().commit()
+    return jsonify({"message": "Success!"}) 
 
-# Get all customers of a specific zip code
-@customers.route('/zip/<zip>', methods=['GET'])
-def get_cust_by_zip(zip):
+# Get a certain supplier from the database based on state
+@suppliers.route('/state/<state>', methods=['GET'])
+def get_supplier_by_state(state):
     # get a cursor object from the database
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of products
-    cursor.execute('SELECT * FROM customer WHERE zip={0}'.format(zip))
+    cursor.execute('SELECT * FROM animal_supplier WHERE state={0}'.format(state))
+
+    # grab the column headers from the returned data
+    column_headers = [x[0] for x in cursor.description]
+
+    # create an empty dictionary object to use in 
+    # putting column headers together with data
+    json_data = []
+
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+
+    # for each of the rows, zip the data elements together with
+    # the column headers. 
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+
+    return jsonify(json_data)
+
+# Get a certain suppliers contact link from the database based on ID
+@suppliers.route('/<supplierID>/contact', methods=['GET'])
+def get_supplier_contact_link(supplierID):
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    # use cursor to query the database for the contact link
+    cursor.execute('SELECT contactLink FROM animal_supplier WHERE supplierID={0}'.format(supplierID))
 
     # grab the column headers from the returned data
     column_headers = [x[0] for x in cursor.description]
