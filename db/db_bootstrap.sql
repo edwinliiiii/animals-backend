@@ -51,11 +51,11 @@ DROP TABLE IF EXISTS review;
 CREATE TABLE IF NOT EXISTS review
 (
     title         varchar(75) NOT NULL,
-    reviewText    text       NOT NULL,
+    reviewText    text        NOT NULL,
     dateCreated   datetime    NOT NULL,
     dateEdited    datetime,
     datePublished datetime,
-    author        varchar(25),
+    author        varchar(25) NOT NULL,
     customerID    int         NOT NULL,
     reviewID      int AUTO_INCREMENT PRIMARY KEY,
     FOREIGN KEY (customerID) REFERENCES customer (customerID) ON UPDATE cascade ON DELETE restrict
