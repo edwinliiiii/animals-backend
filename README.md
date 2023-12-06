@@ -39,7 +39,3 @@ The orders blueprint creates a database for orders that can add orders, update o
 The reviews blueprint creates a database for reviews that can add reviews, get reviews by ID, update reviews, delete reviews, or delete all reviews before a specific timeline
 
 The suppliers blueprint creates a database suppliers that can add suppliers, get suppliers by ID, update suppliers, delete suppliers, get suppliers based on state, or get supplier contact link based on ID
-
-The reviews blueprint creates a database for reviews that can add reviews, get reviews by ID, update reviews, delete reviews, or delete all reviews before a specific timeline
-
-The suppliers blueprint creates a database suppliers that can add suppliers, get suppliers by ID, update suppliers, delete suppliers, get suppliers based on state, or get supplier contact link based on ID
