@@ -33,7 +33,7 @@ def get_orders():
 
     return jsonify(json_data)
 
-# add a new order to the db
+# Add a new order to the db
 # Expects payload with details of the new order
 # Outputs success message if new order is successfully added 
 @orders.route('/', methods=['POST'])
@@ -143,7 +143,7 @@ def update_order(orderID):
     if query is 'UPDATE `order` SET ':
         return jsonify({"message": "Error: no fields provided"}), 400
     
-    #remove unnecessary comma    and    update the appropriate order by orderID
+    #remove unnecessary comma and update the appropriate order by orderID
     query = query[0:len(query) - 1] + " WHERE orderID = {0}".format(orderID)
 
     print(query)
