@@ -6,6 +6,7 @@ from src import db
 customers = Blueprint('customers', __name__)
 
 # Get all the customers from the database
+# Output array containing details of all customers including their personal information
 @customers.route('/', methods=['GET'])
 def get_customers():
     # get a cursor object from the database
@@ -32,6 +33,8 @@ def get_customers():
     return jsonify(json_data)
 
 # add a new customer to the db
+# Expects payload of details of new customer
+# Return success message if details of new customer are successfully inputted 
 @customers.route('/', methods=['POST'])
 def add_new_customer():
     
@@ -132,6 +135,8 @@ def add_new_customer():
     return jsonify({"message":'Success!'})
 
 # Get a certain customer from the database based on ID
+# Expects customerID as input
+# Outputs details of specified customer
 @customers.route('/<customerID>', methods=['GET'])
 def get_type(customerID):
     # get a cursor object from the database
@@ -157,7 +162,9 @@ def get_type(customerID):
 
     return jsonify(json_data)
 
-    # Delete a specific customer from the database based on its customerID
+# Delete a specific customer from the database based on its customerID
+# Expects customerID as input
+# Outputs success message if customer is successfully added 
 @customers.route('/<customerID>', methods=['DELETE'])
 def delete_type(customerID):
     # get a cursor object from the database
@@ -168,6 +175,8 @@ def delete_type(customerID):
     return jsonify({"message": "Success!"}) 
 
 # Update the specified supplier in the database based on supplierID
+# Expects payload of customer updated details
+# Outputs success message if customer is successfully updated
 @customers.route('/<customerID>', methods=['PUT'])
 def update_customer(customerID):
     
@@ -259,6 +268,8 @@ def update_customer(customerID):
 
 
 # Get all customers of a specific zip code
+# Expects input of specific zip code 
+# Outputs array of customers with specified zip code
 @customers.route('/zip/<zip>', methods=['GET'])
 def get_cust_by_zip(zip):
     # get a cursor object from the database

@@ -7,6 +7,7 @@ from src import db
 reviews = Blueprint('reviews', __name__)
 
 # Get all the reviews from the database
+# Outputs array containing details of all reviews
 @reviews.route('/', methods=['GET'])
 def get_reviews():
     # get a cursor object from the database
@@ -33,6 +34,8 @@ def get_reviews():
     return jsonify(json_data)
 
 # add a new review to the db
+# Expects payload with details of the new review
+# Outputs success message if new review is successfully added 
 @reviews.route('/', methods=['POST'])
 def add_new_review():
     
@@ -83,6 +86,8 @@ def add_new_review():
     return jsonify({"message": 'Success!'})
 
 # Get a certain review from the database based on ID
+# Expects input of reviewID
+# Outputs details of a certain review
 @reviews.route('/<reviewID>', methods=['GET'])
 def get_review(reviewID):
     # get a cursor object from the database
@@ -109,6 +114,8 @@ def get_review(reviewID):
     return jsonify(json_data)
 
 # Update the specified review in the database
+# Expects input of payload with updated review
+# Outputs success message if review is successfully updated
 @reviews.route('/<reviewID>', methods=['PUT'])
 def update_review(reviewID):
     
@@ -162,6 +169,8 @@ def update_review(reviewID):
 
 
 # Delete a specific review from the database
+# Expects input of specific reviewID
+# Outputs success message if specific review is successsfully deleted
 @reviews.route('/<reviewID>', methods=['DELETE'])
 def delete_review(reviewID):
     # get a cursor object from the database
@@ -172,6 +181,8 @@ def delete_review(reviewID):
     return jsonify({"message": "Success!"}) 
 
 # Delete a specific review by title from the database
+# Expects input of title
+# # Outputs success message if specific review is successfully deleted
 @reviews.route('/<title>', methods=['DELETE'])
 def delete_review_by_title(title):
     # get a cursor object from the database
@@ -182,6 +193,8 @@ def delete_review_by_title(title):
     return jsonify({"message": "Success!"}) 
 
 # Delete all reviews created earlier than the specified datetime from the database
+# Expects input of datetime
+# Outputs success message if specific review is successfully deleted
 @reviews.route('/created/<datetime>', methods=['DELETE'])
 def delete_review_by_datetime(datetime):
     # get a cursor object from the database
