@@ -33,7 +33,7 @@ def get_guides():
 
     return jsonify(json_data)
 
-# add a new guides to the db
+# Add a new guides to the db
 # Expects payload of details of new guide
 # Return success message if new guide is successfully added 
 @guides.route('/', methods=['POST'])
@@ -101,7 +101,7 @@ def get_guide(guideID):
     return jsonify(json_data)
 
 # Update the specified guide in the database
-# payload of guide updated details
+# Expects payload of guide updated details
 # Outputs success message if guide is successfully updated
 @guides.route('/<guideID>', methods=['PUT'])
 def update_guide(guideID):
@@ -127,7 +127,7 @@ def update_guide(guideID):
     if query is 'UPDATE guides SET ':
         return jsonify({"message": "Error: no fields provided"}), 400
     
-    #remove unnecessary comma    and    update the appropriate order by guideID
+    #remove unnecessary comma and update the appropriate order by guideID
     query = query[0:len(query) - 1] + " WHERE guideID = {0}".format(guideID)
 
     print(query)

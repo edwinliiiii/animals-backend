@@ -60,6 +60,7 @@ def get_animals_joined():
     return jsonify(json_data)
 
 # add a new animal to the db
+# Expects payload with details of the new animal
 # Return success message if details of new animal are successfully inputted 
 @animals.route('/', methods=['POST'])
 def add_new_animal():
@@ -163,7 +164,7 @@ def add_new_animal():
     return jsonify({"message": "Success!"})
 
 # Delete a specific animal from the database
-# Expects animal ID as input
+# Expects animalID as input
 # Outputs success message if animal is successfully deleted
 @animals.route('/<animalID>', methods=['DELETE'])
 def delete_animal(animalID):
@@ -206,7 +207,7 @@ def get_animal(animalID):
     return jsonify(json_data)
 
 # Update the specified animal in the database
-# Expects input of update payload
+# Expects payload of animal updated details
 # Outputs success message if animal is successfully updated
 @animals.route('/<animalID>', methods=['PUT'])
 def update_animal(animalID):

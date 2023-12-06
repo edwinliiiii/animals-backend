@@ -33,7 +33,7 @@ def get_reviews():
 
     return jsonify(json_data)
 
-# add a new review to the db
+# Add a new review to the db
 # Expects payload with details of the new review
 # Outputs success message if new review is successfully added 
 @reviews.route('/', methods=['POST'])
@@ -182,7 +182,7 @@ def delete_review(reviewID):
 
 # Delete a specific review by title from the database
 # Expects input of title
-# # Outputs success message if specific review is successfully deleted
+# Outputs success message if specific review is successfully deleted
 @reviews.route('/<title>', methods=['DELETE'])
 def delete_review_by_title(title):
     # get a cursor object from the database
