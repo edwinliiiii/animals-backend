@@ -7,6 +7,7 @@ from src import db
 guides = Blueprint('guides', __name__)
 
 # Get all the guides from the database
+# Outputs array containing details of all guides
 @guides.route('/', methods=['GET'])
 def get_guides():
     # get a cursor object from the database
@@ -33,6 +34,8 @@ def get_guides():
     return jsonify(json_data)
 
 # add a new guides to the db
+# Expects payload of details of new guide
+# Return success message if new guide is successfully added 
 @guides.route('/', methods=['POST'])
 def add_new_guides():
     
@@ -70,6 +73,8 @@ def add_new_guides():
     return jsonify({"message": "Success!"})
 
 # Get a certain guide from the database based on ID
+# Expects input of guideID
+# Outputs details of a specific guide
 @guides.route('/<guideID>', methods=['GET'])
 def get_guide(guideID):
     
@@ -96,6 +101,8 @@ def get_guide(guideID):
     return jsonify(json_data)
 
 # Update the specified guide in the database
+# payload of guide updated details
+# Outputs success message if guide is successfully updated
 @guides.route('/<guideID>', methods=['PUT'])
 def update_guide(guideID):
     
@@ -134,6 +141,8 @@ def update_guide(guideID):
     return jsonify({"message": "Success!"})
 
 # Delete a specific guide from the database
+# Expects input of guideID
+# Outputs success message if customer is successfully deleted
 @guides.route('/<guideID>', methods=['DELETE'])
 def delete_guide(guideID):
     # get a cursor object from the database
@@ -144,6 +153,8 @@ def delete_guide(guideID):
     return jsonify({"message": "Success!"}) 
 
 # Delete all guides created earlier than the specified datetime from the database
+# Expects input of datetime
+# Outputs success message if guides are successfully deleted
 @guides.route('/created/<datetime>', methods=['DELETE'])
 def delete_guide_by_datetime(datetime):
     # get a cursor object from the database

@@ -6,6 +6,7 @@ from src import db
 suppliers = Blueprint('suppliers', __name__)
 
 # Get all the suppliers from the database
+# Ouptut array containing details of all suppliers
 @suppliers.route('/', methods=['GET'])
 def get_suppliers():
     # get a cursor object from the database
@@ -32,6 +33,8 @@ def get_suppliers():
     return jsonify(json_data)
 
 # add a new supplier to the db
+# Expects payload with details of the new supplier
+# Outputs success message if new supplier is successfully added 
 @suppliers.route('/', methods=['POST'])
 def add_new_supplier():
     
@@ -134,6 +137,8 @@ def add_new_supplier():
     return jsonify({"message":'Success!'})
 
 # Get a certain supplier from the database based on ID
+# Expects input of supplierID
+# Outputs details of a certain supplier
 @suppliers.route('/<supplierID>', methods=['GET'])
 def get_supplier(supplierID):
     # get a cursor object from the database
@@ -160,6 +165,8 @@ def get_supplier(supplierID):
     return jsonify(json_data)
 
 # Update the specified supplier in the database based on supplierID
+# Expects input of payload with updated details
+# Outputs success message if new supplier is successfully added 
 @suppliers.route('/<supplierID>', methods=['PUT'])
 def update_supplier(supplierID):
     
@@ -250,7 +257,9 @@ def update_supplier(supplierID):
     
     return jsonify({"message": "Success!"})
 
-    # Delete a specific supplier from the database based on its supplierID
+# Delete a specific supplier from the database based on its supplierID
+# Expected input of supplierID
+# Output success message when specific supplier is successfully deleted 
 @suppliers.route('/<supplierID>', methods=['DELETE'])
 def delete_supplier(supplierID):
     # get a cursor object from the database
@@ -261,6 +270,8 @@ def delete_supplier(supplierID):
     return jsonify({"message": "Success!"}) 
 
 # Get a certain supplier from the database based on state
+# Expected input of a state
+# Output details of certain supplier based on inputted state
 @suppliers.route('/state/<state>', methods=['GET'])
 def get_supplier_by_state(state):
     # get a cursor object from the database
@@ -287,6 +298,8 @@ def get_supplier_by_state(state):
     return jsonify(json_data)
 
 # Get a certain suppliers contact link from the database based on ID
+# Expected input of supplierID
+# Output the contact link of a certain supplier based on supplierID
 @suppliers.route('/<supplierID>/contact', methods=['GET'])
 def get_supplier_contact_link(supplierID):
     # get a cursor object from the database

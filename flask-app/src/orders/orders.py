@@ -7,6 +7,7 @@ from src import db
 orders = Blueprint('orders', __name__)
 
 # Get all the orders from the database
+# Output array containing details of all orders
 @orders.route('/', methods=['GET'])
 def get_orders():
     # get a cursor object from the database
@@ -33,6 +34,8 @@ def get_orders():
     return jsonify(json_data)
 
 # add a new order to the db
+# Expects payload with details of the new order
+# Outputs success message if new order is successfully added 
 @orders.route('/', methods=['POST'])
 def add_new_order():
     
@@ -77,6 +80,8 @@ def add_new_order():
     return jsonify({"message": "Success!"})
 
 # Get a certain order from the database based on ID
+# Expects input of orderID
+# Outputs details of a certain order
 @orders.route('/<orderID>', methods=['GET'])
 def get_order(orderID):
     # get a cursor object from the database
@@ -102,6 +107,8 @@ def get_order(orderID):
     return jsonify(json_data)
 
 # Update the specified order in the database
+# Expects payload with updated order details
+# Outputs success message if order is successfully updated 
 @orders.route('/<orderID>', methods=['PUT'])
 def update_order(orderID):
     
@@ -150,6 +157,8 @@ def update_order(orderID):
     return jsonify({"message": "Success!"})
 
 # Delete a specific order from the database
+# Expects input of specific orderID
+# Outputs success message if order is successfully deleted  
 @orders.route('/<orderID>', methods=['DELETE'])
 def delete_order(orderID):
     # get a cursor object from the database
@@ -159,7 +168,9 @@ def delete_order(orderID):
     db.get_db().commit()
     return jsonify({"message": "Success!"}) 
 
-# Retrieve all orders of a particular payment type
+# Get all orders of a particular payment type
+# Expects input of paymentMethod 
+# Outputs details of all orders of a particular payment type
 @orders.route('/customer/<paymentMethod>', methods=['GET'])
 def get_all_orders_of_paymentMethod(paymentMethod):
     # get a cursor object from the database

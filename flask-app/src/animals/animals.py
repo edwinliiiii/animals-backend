@@ -6,6 +6,7 @@ from src import db
 animals = Blueprint('animals', __name__)
 
 # Get all the animals from the database
+# Output an array of all animals including their types and suppliers 
 @animals.route('/', methods=['GET'])
 def get_animals():
     # get a cursor object from the database
@@ -32,6 +33,7 @@ def get_animals():
     return jsonify(json_data)
 
 # Get all the animals from the database
+# Outputs array containing details of all animals with additional information from joined tables
 @animals.route('/joined', methods=['GET'])
 def get_animals_joined():
     # get a cursor object from the database
@@ -58,6 +60,7 @@ def get_animals_joined():
     return jsonify(json_data)
 
 # add a new animal to the db
+# Return success message if details of new animal are successfully inputted 
 @animals.route('/', methods=['POST'])
 def add_new_animal():
     
@@ -160,6 +163,8 @@ def add_new_animal():
     return jsonify({"message": "Success!"})
 
 # Delete a specific animal from the database
+# Expects animal ID as input
+# Outputs success message if animal is successfully deleted
 @animals.route('/<animalID>', methods=['DELETE'])
 def delete_animal(animalID):
     # get a cursor object from the database
@@ -172,6 +177,8 @@ def delete_animal(animalID):
     return jsonify({"message": "Success!"}) 
 
 # Get a certain animal from the database based on ID
+# Expects animal ID as input
+# Outputs details of specified animal
 @animals.route('/<animalID>', methods=['GET'])
 def get_animal(animalID):
     
@@ -199,6 +206,8 @@ def get_animal(animalID):
     return jsonify(json_data)
 
 # Update the specified animal in the database
+# Expects input of update payload
+# Outputs success message if animal is successfully updated
 @animals.route('/<animalID>', methods=['PUT'])
 def update_animal(animalID):
     
@@ -298,6 +307,8 @@ def update_animal(animalID):
 
 
 # Get all animals from the database based on a certain species
+# Expects input of certain species name 
+# Outputs array of animals of a certain species
 @animals.route('/type/<species>', methods=['GET'])
 def get_animal_by_species(species):
     # get a cursor object from the database
@@ -325,6 +336,8 @@ def get_animal_by_species(species):
     return jsonify(json_data)
 
 # Get all animals from the database based on a certain species and subspecies
+# Expects input of certain species and subspecies name 
+# Outputs array of animals of a certain species and subspecies
 @animals.route('/type/<species>/<subSpecies>', methods=['GET'])
 def get_animal_by_species_subspecies(species, subSpecies):
     # get a cursor object from the database
@@ -353,6 +366,8 @@ def get_animal_by_species_subspecies(species, subSpecies):
     return jsonify(json_data)
 
 # Get all animals from the database based on a certain origin
+# Expects input of certain origin  
+# Outputs array of animals of a certain origin
 @animals.route('/origin/<origin>', methods=['GET'])
 def get_animal_by_origin(origin):
     # get a cursor object from the database
@@ -380,6 +395,8 @@ def get_animal_by_origin(origin):
     return jsonify(json_data)
 
 # Get all animals from the database based on a certain availability
+# Expects input of certain availability
+# Outputs array of animals of a certain availability 
 @animals.route('/availability/<availability>', methods=['GET'])
 def get_animal_by_availability(availability):
     # get a cursor object from the database
@@ -408,6 +425,8 @@ def get_animal_by_availability(availability):
 
 
 # Get all the animals from the database
+# Expect input of supplierID
+# Output array containing details of animals supplied by the specific supplier
 @animals.route('/supplier/<supplierID>', methods=['GET'])
 def get_animals_by_supplier(supplierID):
     # get a cursor object from the database
